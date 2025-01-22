@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/result",
+      "destination": "http://software.diu.edu.bd:8006/result"
+    },
+    {
+      "source": "/api/result/studentInfo",
+      "destination": "http://software.diu.edu.bd:8006/result/studentInfo"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -88,7 +88,7 @@ const ProfileAndSummary = ({
   // Normal content when loading is false
   return (
     <>
-      <div className="mx-auto mt-10 grid w-4/5 grid-cols-1 gap-4 md:grid-cols-6">
+      <div className="mx-auto my-4 grid w-4/5 grid-cols-1 gap-4 md:grid-cols-6">
         {/* Profile Section */}
         <div className="grid grid-cols-1 content-center gap-4 rounded-md bg-sky-100 p-4 md:col-span-2">
           <div className="flex justify-center">
@@ -156,8 +156,12 @@ const ProfileAndSummary = ({
 
         {/* CGPA Chart */}
         <div className="md:col-span-3">
-          {results.length > 0 && (
+          {results.length > 0 ? (
             <CgpaChart results={results} compareResults={compareResults} />
+          ) : (
+            <p className="flex content-center items-center justify-center">
+              No data available
+            </p>
           )}
         </div>
       </div>

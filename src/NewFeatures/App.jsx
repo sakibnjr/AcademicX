@@ -205,7 +205,7 @@ const App = () => {
   };
 
   return (
-    <div className="bg-background flex h-screen flex-col gap-10">
+    <div className="flex h-screen flex-col gap-10 bg-background">
       <div className="mx-auto w-4/5">
         <Navbar profile={profile} resetResults={resetResults} />
       </div>

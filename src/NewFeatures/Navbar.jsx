@@ -87,7 +87,7 @@ const Navbar = ({ profile, resetResults }) => {
         <div className="navbar-end flex items-center space-x-4">
           <button
             onClick={resetResults}
-            className="btn btn-outline btn-error btn-sm md:btn-md"
+            className="menu rounded-md border-2 border-error text-text hover:bg-error hover:text-white"
           >
             Log Out
           </button>

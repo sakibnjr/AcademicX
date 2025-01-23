@@ -18,7 +18,7 @@ const Home = ({
   error,
 }) => {
   return (
-    <div className="flex flex-1">
+    <div className="flex-1 content-center">
       {/* Show HeroSection only if no profile is available and data is not being loaded */}
       {!profile && !loading ? (
         <HeroSection

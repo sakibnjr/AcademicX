@@ -48,7 +48,6 @@ const StyledWrapper = styled.div`
     padding: 8px 15px;
     color: #333;
     font-size: 16px;
-    font-weight: 600;
     transition: 0.3s ease-in-out;
     pointer-events: none;
   }

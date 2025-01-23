@@ -11,7 +11,7 @@ const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
         setStudentId={setStudentId}
         handleFetchResults={handleFetchResults}
       />
-      <div className="flex flex-col items-center justify-center md:flex-row">
+      <div className="my-4 flex flex-col items-center justify-center md:flex-row">
         <Input studentId={studentId} setStudentId={setStudentId} />
         <div className="w-full">
           <Button handleFetchResults={handleFetchResults} />

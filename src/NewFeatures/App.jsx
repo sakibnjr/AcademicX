@@ -14,6 +14,8 @@ import MarksheetFilter from "./MarksheetFilter";
 import Compare from "./Compare";
 import Home from "./Home";
 import NotFoundPage from "./NotFoundPage";
+import ContactPage from "./Contact";
+import FAQ from "./FAQ";
 
 const App = () => {
   const [studentId, setStudentId] = useState("");
@@ -48,7 +50,7 @@ const App = () => {
   const fetchSemesterData = useCallback(async (semesterId, studentId) => {
     try {
       const response = await axios.get(
-        `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`
+        `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -61,7 +63,7 @@ const App = () => {
   const fetchStudentProfile = useCallback(async (studentId) => {
     try {
       const response = await axios.get(
-        `/api/result/studentInfo?studentId=${studentId}`
+        `/api/result/studentInfo?studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -100,13 +102,13 @@ const App = () => {
             cgpa: data[0]?.cgpa,
             totalCredits: data.reduce(
               (total, course) => total + course.totalCredit,
-              0
+              0,
             ),
             data,
           };
         }
         return null;
-      })
+      }),
     );
 
     const validResults = fetchedResults.filter(Boolean);
@@ -143,13 +145,13 @@ const App = () => {
             cgpa: data[0]?.cgpa,
             totalCredits: data.reduce(
               (total, course) => total + course.totalCredit,
-              0
+              0,
             ),
             data,
           };
         }
         return null;
-      })
+      }),
     );
 
     const validCompareResults = fetchedCompareResults.filter(Boolean);
@@ -187,7 +189,7 @@ const App = () => {
 
     let totalCredits = semesters.reduce(
       (total, semester) => total + (semester.totalCredits || 0),
-      0
+      0,
     );
 
     const avgCgpa = totalCredits > 0 ? weightedCgpaSum / totalCredits : 0;
@@ -203,13 +205,13 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="w-4/5 mx-auto">
+    <div className="bg-background flex h-screen flex-col gap-10">
+      <div className="mx-auto w-4/5">
         <Navbar profile={profile} resetResults={resetResults} />
       </div>
 
       {error && (
-        <div className="text-red-500 text-center my-4 font-semibold text-lg">
+        <div className="my-4 text-center text-lg font-semibold text-red-500">
           {error}
         </div>
       )}
@@ -262,6 +264,8 @@ const App = () => {
             )
           }
         />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/faq" element={<FAQ />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />

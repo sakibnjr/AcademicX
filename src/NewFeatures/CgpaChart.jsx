@@ -19,7 +19,7 @@ ChartJS.register(
   PointElement, // Register PointElement
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const CgpaChart = ({ results }) => {
@@ -29,8 +29,8 @@ const CgpaChart = ({ results }) => {
       {
         label: "",
         data: results.map((semester) => semester.cgpa),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(110, 167, 240, 1)",
+        borderColor: "rgba(24, 112, 224, 1)",
         borderWidth: 2,
         fill: true, // Fill under the line
       },
@@ -71,7 +71,7 @@ const CgpaChart = ({ results }) => {
 
   return (
     <div className="my-4">
-      <h2 className="text-center text-xl font-bold mb-4">Semester-wise SGPA</h2>
+      <h2 className="mb-4 text-center text-xl font-bold">Semester-wise SGPA</h2>
       <Line data={data} options={options} />
     </div>
   );

@@ -10,8 +10,8 @@ const Navbar = ({ profile, resetResults }) => {
   const isActive = (path) => location.pathname === path;
 
   // Classes for active and inactive links
-  const activeClass = "text-white bg-blue-600"; // Active link style
-  const inactiveClass = "text-gray-700 hover:text-blue-600"; // Inactive link style
+  const activeClass = "text-white bg-primary"; // Active link style
+  const inactiveClass = "text-gray-700 hover:text-primary"; // Inactive link style
 
   // Close menu function
   const handleLinkClick = () => {
@@ -19,12 +19,12 @@ const Navbar = ({ profile, resetResults }) => {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-lg rounded-xl mt-2">
+    <div className="navbar mt-2 rounded-xl bg-base-100">
       {/* Left Side - Logo */}
       <div className="navbar-start flex items-center">
-        <Link to="/" className="text-xl flex items-center">
+        <Link to="/" className="flex items-center text-xl">
           Academic
-          <span className="italic text-4xl relative -left-1">X</span>
+          <span className="relative -left-1 text-4xl italic">X</span>
         </Link>
       </div>
 
@@ -34,7 +34,7 @@ const Navbar = ({ profile, resetResults }) => {
           profile ? "navbar-center hidden lg:flex" : "navbar-end hidden lg:flex"
         }
       >
-        <ul className="menu menu-horizontal p-0 space-x-6">
+        <ul className="menu menu-horizontal space-x-6 p-0">
           <li>
             <Link
               to="/"
@@ -87,7 +87,7 @@ const Navbar = ({ profile, resetResults }) => {
         <div className="navbar-end flex items-center space-x-4">
           <button
             onClick={resetResults}
-            className="btn btn-error btn-outline btn-sm md:btn-md"
+            className="btn btn-outline btn-error btn-sm md:btn-md"
           >
             Log Out
           </button>
@@ -106,17 +106,17 @@ const Navbar = ({ profile, resetResults }) => {
 
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden flex items-center justify-center w-screen h-screen fixed top-0 left-0 bg-base-100 z-50">
-          <div className="flex flex-col items-center justify-center w-full h-full bg-white rounded-lg shadow-lg p-4">
+        <div className="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-base-100 lg:hidden">
+          <div className="flex h-full w-full flex-col items-center justify-center rounded-lg bg-white p-4 shadow-lg">
             {/* Close Button */}
             <button
               onClick={() => setIsMenuOpen(false)}
-              className="self-center text-gray-700 mb-4"
+              className="mb-4 self-center text-gray-700"
             >
               <FaTimes className="text-2xl" />
             </button>
 
-            <ul className="menu p-2 space-y-6 w-full">
+            <ul className="menu w-full space-y-6 p-2">
               <li>
                 <Link
                   to="/"

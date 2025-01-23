@@ -21,14 +21,14 @@ const ProfileAndSummary = ({
     // Render skeleton while loading
     return (
       <>
-        <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-6 gap-4 my-4">
+        <div className="mx-auto my-4 grid w-4/5 grid-cols-1 gap-4 md:grid-cols-6">
           {/* Skeleton for Profile Section */}
-          <div className="grid grid-cols-1 content-center gap-4 p-4 rounded-md bg-sky-100 md:col-span-2">
+          <div className="grid grid-cols-1 content-center gap-4 rounded-md bg-sky-100 p-4 md:col-span-2">
             <div className="flex justify-center">
               <Skeleton circle={true} height={100} width={100} />
             </div>
 
-            <div className="flex flex-col justify-center items-center gap-2">
+            <div className="flex flex-col items-center justify-center gap-2">
               <Skeleton width={300} height={40} />
               <Skeleton width={150} height={20} />
               <Skeleton width={180} height={20} />
@@ -38,7 +38,7 @@ const ProfileAndSummary = ({
 
           {/* Skeleton for Academic Summary */}
           <div className="grid grid-cols-1 gap-4 md:col-span-1">
-            <div className="flex justify-start items-center gap-8 border-y-2 border-r-2">
+            <div className="flex items-center justify-start gap-8 border-y-2 border-r-2">
               <div className="flex flex-col">
                 <Skeleton width={15} height={15} />
                 <Skeleton width={15} height={15} />
@@ -71,11 +71,11 @@ const ProfileAndSummary = ({
           </div>
         </div>
         {/* Skeleton for Semester Slider */}
-        <div className="w-4/5 mx-auto flex flex-col items-center gap-y-2">
+        <div className="mx-auto flex w-4/5 flex-col items-center gap-y-2">
           <div>
             <Skeleton width={180} height={25} />
           </div>
-          <div className="flex justify-center items-start gap-10">
+          <div className="flex items-start justify-center gap-10">
             <Skeleton width={50} height={20} />
             <Skeleton width={50} height={20} />
             <Skeleton width={50} height={20} />
@@ -88,9 +88,9 @@ const ProfileAndSummary = ({
   // Normal content when loading is false
   return (
     <>
-      <div className="w-4/5 mx-auto grid grid-cols-1 md:grid-cols-6 gap-4 mt-10">
+      <div className="mx-auto mt-10 grid w-4/5 grid-cols-1 gap-4 md:grid-cols-6">
         {/* Profile Section */}
-        <div className="grid grid-cols-1 content-center gap-4 p-4 rounded-md bg-sky-100 md:col-span-2">
+        <div className="grid grid-cols-1 content-center gap-4 rounded-md bg-sky-100 p-4 md:col-span-2">
           <div className="flex justify-center">
             <img
               src={`https://avatar.iran.liara.run/public?name=${profile.studentName}&gender=male&size=500`}
@@ -98,7 +98,7 @@ const ProfileAndSummary = ({
               className="size-48 rounded-full object-cover"
             />
           </div>
-          <div className="flex flex-col justify-center items-center gap-2">
+          <div className="flex flex-col items-center justify-center gap-2">
             <h2 className="text-2xl font-semibold text-gray-800">
               {profile.studentName}
             </h2>
@@ -110,18 +110,37 @@ const ProfileAndSummary = ({
 
         {/* Academic Summary */}
         <div className="grid grid-cols-1 gap-4 md:col-span-1">
-          <div className="flex justify-start items-center gap-8 border-y-2 border-r-2">
-            <h3 className="text-xl font-semibold text-green-600 flex flex-col">
+          <div className="flex items-center justify-start gap-8 border-y-2 border-r-2">
+            <h3 className="flex flex-col text-xl font-semibold text-green-600">
               <span>C</span>
               <span>G</span>
               <span>P</span>
               <span>A</span>
             </h3>
-            <div className="w-24 h-24">
+            <div className="h-24 w-24">
               <CircularProgressbar
                 value={averageCgpa * 10}
                 maxValue={40}
                 text={`${averageCgpa}`}
+                styles={{
+                  path: {
+                    stroke: "#408beb", // Progress color
+                    strokeLinecap: "round", // Rounded edges on the path
+                    strokeWidth: 8, // Thickness of the progress path
+                  },
+                  trail: {
+                    stroke: "#d6d6d6", // Background path color (non-progressed part)
+                    strokeWidth: 8, // Background path thickness
+                  },
+                  text: {
+                    fill: "#408beb", // Color of the text
+                    fontSize: "24px", // Text size
+                    fontWeight: "bold", // Text weight
+                  },
+                  background: {
+                    fill: "#e0e0e0", // Background circle color (optional)
+                  },
+                }}
               />
             </div>
           </div>
@@ -143,7 +162,7 @@ const ProfileAndSummary = ({
         </div>
       </div>
 
-      <div className="w-4/5 mx-auto">
+      <div className="mx-auto w-4/5">
         <SemesterSlider
           results={results}
           toggleSemesterDetails={toggleSemesterDetails}

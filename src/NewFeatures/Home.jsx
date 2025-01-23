@@ -1,5 +1,5 @@
 import React from "react";
-import IdInputButton from "./IdInputButton";
+import HeroSection from "./HeroSection";
 import ProfileAndSummary from "./ProfileAndSummary";
 
 const Home = ({
@@ -18,10 +18,10 @@ const Home = ({
   error,
 }) => {
   return (
-    <div className="flex-1 content-center">
-      {/* Show IdInputButton only if no profile is available and data is not being loaded */}
+    <div className="flex flex-1">
+      {/* Show HeroSection only if no profile is available and data is not being loaded */}
       {!profile && !loading ? (
-        <IdInputButton
+        <HeroSection
           studentId={studentId}
           setStudentId={setStudentId}
           handleFetchResults={handleFetchResults}

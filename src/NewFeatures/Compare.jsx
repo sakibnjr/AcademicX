@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { GridLoader } from "react-spinners"; // Import the spinner component
 import CompareCgpaChart from "./CompareCgpaChart";
+import Loader from "./Loader";
 
 const Compare = ({
   results,
@@ -21,17 +21,17 @@ const Compare = ({
   return (
     <div>
       {results.length > 0 && (
-        <div className="w-4/5 mx-auto my-4 flex items-center space-x-4">
+        <div className="mx-auto my-4 flex w-4/5 items-center space-x-4">
           <input
             type="text"
             placeholder="Enter second Student ID for comparison"
             value={compareStudentId}
             onChange={(e) => setCompareStudentId(e.target.value)}
-            className="border-2 border-gray-300 p-3 rounded-lg w-full text-lg focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-lg border-2 border-gray-300 p-3 text-lg focus:ring-2 focus:ring-indigo-500"
           />
           <button
             onClick={fetchCompareResults} // Use the wrapper function
-            className="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition duration-300"
+            className="bg-primaryDark rounded-lg p-3 text-white transition duration-300"
           >
             <AiOutlineSearch size={24} />
           </button>
@@ -40,8 +40,8 @@ const Compare = ({
       {results.length > 0 && (
         <div>
           {isLoading ? (
-            <div className="flex justify-center items-center mt-8">
-              <GridLoader color="#4c6ef5" size={50} /> {/* Spinner */}
+            <div className="m-8 flex items-center justify-center">
+              <Loader /> {/* Spinner */}
             </div>
           ) : (
             <CompareCgpaChart

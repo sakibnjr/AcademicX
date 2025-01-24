@@ -30,28 +30,36 @@ const App = () => {
   const [totalSemestersCompleted, setTotalSemestersCompleted] = useState(0);
   const [expandedSemester, setExpandedSemester] = useState(null);
   const [retake, setRetake] = useState(false);
+  const [retakeCourses, setRetakeCourses] = useState(0);
 
   const navigate = useNavigate(); // Initialize navigate
 
-  const semesterList = [
-    { id: "213", name: "Fall 2021" },
-    { id: "221", name: "Spring 2022" },
-    { id: "222", name: "Summer 2022" },
-    { id: "223", name: "Fall 2022" },
-    { id: "231", name: "Spring 2023" },
-    { id: "232", name: "Summer 2023" },
-    { id: "233", name: "Fall 2023" },
-    { id: "241", name: "Spring 2024" },
-    { id: "242", name: "Summer 2024" },
-    { id: "243", name: "Fall 2024" },
-    { id: "251", name: "Spring 2025" },
-  ];
+  const generateSemesterList = () => {
+    const semesters = [];
+
+    for (let year = 2015; year <= 2025; year++) {
+      const yearSuffix = year.toString().slice(-2); // Get last two digits of the year
+
+      // Fall semester
+      semesters.push({ id: `${yearSuffix}3`, name: `Fall ${year}` });
+
+      // Spring semester
+      semesters.push({ id: `${yearSuffix}1`, name: `Spring ${year}` });
+
+      // Summer semester
+      semesters.push({ id: `${yearSuffix}2`, name: `Summer ${year}` });
+    }
+
+    return semesters;
+  };
+
+  const semesterList = generateSemesterList();
 
   // Unified function to fetch semester data
   const fetchSemesterData = useCallback(async (semesterId, studentId) => {
     try {
       const response = await axios.get(
-        `http://software.diu.edu.bd:8006/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
+        `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -60,11 +68,41 @@ const App = () => {
     }
   }, []);
 
+  //function to save data in local storage with expiry
+  const saveToLocalStorageWithExpiry = (key, value) => {
+    const now = new Date();
+    const item = {
+      value: value,
+      expiry: now.getTime() + 30 * 24 * 60 * 60 * 1000, // 1 month in milliseconds
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+  };
+
+  const getFromLocalStorageWithExpiry = (key) => {
+    const itemStr = localStorage.getItem(key);
+    // If the item doesn't exist, return null
+    if (!itemStr) {
+      return null;
+    }
+
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+
+    // Compare the expiry date with the current date
+    if (now.getTime() > item.expiry) {
+      // If expired, remove from local storage and return null
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return item.value;
+  };
+
   // Fetch student profile
   const fetchStudentProfile = useCallback(async (studentId) => {
     try {
       const response = await axios.get(
-        `http://software.diu.edu.bd:8006/result/studentInfo?studentId=${studentId}`,
+        `/api/result/studentInfo?studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -84,6 +122,21 @@ const App = () => {
     setError(null);
     resetResults();
 
+    // Check if profile data is already in local storage
+    const cachedProfile = getFromLocalStorageWithExpiry(`profile_${studentId}`);
+    const cachedResults = getFromLocalStorageWithExpiry(`results_${studentId}`);
+
+    // Save in local storage
+    if (cachedProfile && cachedResults) {
+      // Use cached data
+      setProfile(cachedProfile);
+      setResults(cachedResults);
+      calculateSummary(cachedResults);
+      setLoading(false);
+      navigate("/"); // Navigate to overview after fetching results
+      return;
+    }
+
     const studentProfile = await fetchStudentProfile(studentId);
     if (!studentProfile) {
       setError("Student profile not found.");
@@ -92,6 +145,9 @@ const App = () => {
     }
 
     setProfile(studentProfile);
+
+    // Save in local storage with expiry
+    saveToLocalStorageWithExpiry(`profile_${studentId}`, studentProfile);
 
     // Fetch results for each semester
     const fetchedResults = await Promise.all(
@@ -114,6 +170,9 @@ const App = () => {
 
     const validResults = fetchedResults.filter(Boolean);
     setResults(validResults);
+
+    // Save in local storage with expiry
+    saveToLocalStorageWithExpiry(`results_${studentId}`, validResults);
 
     calculateSummary(validResults);
 
@@ -189,9 +248,19 @@ const App = () => {
       })),
     );
 
+    // State to track if a course was retaken
+    let isRetaken = false;
+    let retakeCount = 0;
+
     // Create a map to track the highest CGPA for each course title
     const uniqueCourses = allCourses.reduce((map, course) => {
       const existingCourse = map.get(course.courseTitle);
+
+      // If the same course is found, mark retake as true
+      if (existingCourse) {
+        isRetaken = true; // Found a retaken course
+        retakeCount++;
+      }
 
       // Update the map with the course that has the higher CGPA
       if (
@@ -223,6 +292,8 @@ const App = () => {
     setAverageCgpa(avgCgpa.toFixed(2));
     setTotalCreditsCompleted(totalCredits);
     setTotalSemestersCompleted(semesters.length);
+    setRetake(isRetaken); // Set the retake state
+    setRetakeCourses(retakeCount);
   };
 
   // Toggle expanded details for semesters
@@ -260,6 +331,8 @@ const App = () => {
               toggleSemesterDetails={toggleSemesterDetails}
               expandedSemester={expandedSemester}
               loading={loading}
+              retake={retake}
+              retakeCourses={retakeCourses}
             />
           }
         />

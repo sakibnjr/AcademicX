@@ -15,7 +15,8 @@ const Home = ({
   toggleSemesterDetails,
   expandedSemester,
   loading,
-  error,
+  retake,
+  retakeCourses,
 }) => {
   return (
     <div className="flex-1 content-center">
@@ -38,7 +39,8 @@ const Home = ({
           toggleSemesterDetails={toggleSemesterDetails}
           expandedSemester={expandedSemester}
           loading={loading}
-          error={error}
+          retake={retake}
+          retakeCourses={retakeCourses}
         />
       )}
     </div>

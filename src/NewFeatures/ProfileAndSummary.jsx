@@ -16,6 +16,8 @@ const ProfileAndSummary = ({
   toggleSemesterDetails,
   expandedSemester,
   loading,
+  retake,
+  retakeCourses,
 }) => {
   if (loading) {
     // Render skeleton while loading
@@ -145,6 +147,9 @@ const ProfileAndSummary = ({
           <div className="stat border-2">
             <div className="stat-title">Credits</div>
             <div className="stat-value">{totalCreditsCompleted}</div>
+            {retake && (
+              <div className="stat-desc">Retake Count {retakeCourses}</div>
+            )}
           </div>
           <div className="stat border-2">
             <div className="stat-title">Semesters</div>

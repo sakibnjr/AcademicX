@@ -11,7 +11,7 @@ const Input = ({ studentId, setStudentId }) => {
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
         />
-        <span>Stundent ID</span>
+        <span>Student ID</span>
       </form>
     </StyledWrapper>
   );

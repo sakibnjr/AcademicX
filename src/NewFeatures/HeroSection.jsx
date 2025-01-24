@@ -5,7 +5,7 @@ import Input from "./Input";
 import Text from "./Text";
 const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
   return (
-    <div className="mx-auto grid w-4/5 justify-center rounded-lg bg-white p-8">
+    <div className="mx-auto grid w-4/5 justify-center rounded-lg bg-white p-8 shadow-xl shadow-primary/15">
       <Text
         studentId={studentId}
         setStudentId={setStudentId}

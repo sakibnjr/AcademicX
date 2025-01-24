@@ -40,10 +40,10 @@ const SemesterSlider = ({
   return (
     <div className="slider-container">
       <div
-        className="flex tooltip tooltip-bottom tooltip-accent"
+        className="tooltip tooltip-bottom tooltip-accent flex"
         data-tip="Swipe left-right <> Use keyboard arrow keys <> Click to view details"
       >
-        <p className="flex items-center gap-2 text-sm text-center text-sky-500 mt-4 cursor-pointer">
+        <p className="mt-4 flex cursor-pointer items-center gap-2 text-center text-sm text-primary">
           Hover here for instructions
           <span>
             <FaCircleInfo />

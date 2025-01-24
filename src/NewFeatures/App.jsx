@@ -29,6 +29,7 @@ const App = () => {
   const [totalCreditsCompleted, setTotalCreditsCompleted] = useState(null);
   const [totalSemestersCompleted, setTotalSemestersCompleted] = useState(0);
   const [expandedSemester, setExpandedSemester] = useState(null);
+  const [retake, setRetake] = useState(false);
 
   const navigate = useNavigate(); // Initialize navigate
 
@@ -50,7 +51,7 @@ const App = () => {
   const fetchSemesterData = useCallback(async (semesterId, studentId) => {
     try {
       const response = await axios.get(
-        `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
+        `http://software.diu.edu.bd:8006/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -63,7 +64,7 @@ const App = () => {
   const fetchStudentProfile = useCallback(async (studentId) => {
     try {
       const response = await axios.get(
-        `/api/result/studentInfo?studentId=${studentId}`,
+        `http://software.diu.edu.bd:8006/result/studentInfo?studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -180,20 +181,45 @@ const App = () => {
   const calculateSummary = (semesters) => {
     if (!semesters.length) return;
 
-    let weightedCgpaSum = semesters.reduce((total, semester) => {
-      if (semester.cgpa && semester.totalCredits) {
-        return total + semester.cgpa * semester.totalCredits;
-      }
-      return total;
-    }, 0);
-
-    let totalCredits = semesters.reduce(
-      (total, semester) => total + (semester.totalCredits || 0),
-      0,
+    // Flatten all courses across semesters
+    const allCourses = semesters.flatMap((semester) =>
+      semester.data.map((course) => ({
+        ...course,
+        semesterName: semester.semesterName, // Retain the semester info
+      })),
     );
 
+    // Create a map to track the highest CGPA for each course title
+    const uniqueCourses = allCourses.reduce((map, course) => {
+      const existingCourse = map.get(course.courseTitle);
+
+      // Update the map with the course that has the higher CGPA
+      if (
+        !existingCourse ||
+        course.pointEquivalent > existingCourse.pointEquivalent
+      ) {
+        map.set(course.courseTitle, course);
+      }
+
+      return map;
+    }, new Map());
+
+    // Calculate weighted CGPA and total credits using only unique courses
+    const { weightedCgpaSum, totalCredits } = Array.from(
+      uniqueCourses.values(),
+    ).reduce(
+      (acc, course) => {
+        acc.weightedCgpaSum += course.pointEquivalent * course.totalCredit;
+        acc.totalCredits += course.totalCredit;
+        return acc;
+      },
+      { weightedCgpaSum: 0, totalCredits: 0 },
+    );
+
+    // Calculate average CGPA
     const avgCgpa = totalCredits > 0 ? weightedCgpaSum / totalCredits : 0;
 
+    // Set the calculated values
     setAverageCgpa(avgCgpa.toFixed(2));
     setTotalCreditsCompleted(totalCredits);
     setTotalSemestersCompleted(semesters.length);
@@ -205,7 +231,7 @@ const App = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col gap-10 bg-background">
+    <div className="flex h-screen flex-col gap-10">
       <div className="mx-auto w-4/5">
         <Navbar profile={profile} resetResults={resetResults} />
       </div>

@@ -13,6 +13,7 @@ import {
   RadialLinearScale,
   Filler,
 } from "chart.js";
+import ComparisonSummary from "./ComparisonSummary";
 
 // Register Chart.js components
 ChartJS.register(
@@ -25,7 +26,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const CompareCgpaCharts = ({ results, compareResults }) => {
@@ -43,7 +44,7 @@ const CompareCgpaCharts = ({ results, compareResults }) => {
       fill: true,
     },
     {
-      label: "Comparison CGPA",
+      label: "Competitor CGPA",
       data: compareResults.map((semester) => semester.cgpa),
       borderColor: "rgba(255, 99, 132, 1)",
       backgroundColor: "rgba(255, 99, 132, 0.2)",
@@ -116,13 +117,13 @@ const CompareCgpaCharts = ({ results, compareResults }) => {
   };
 
   return (
-    <div className="my-4 w-4/5 mx-auto">
-      <h2 className="text-center text-xl font-bold mb-4">
+    <div className="mx-auto my-4 w-4/5">
+      <h2 className="mb-4 text-center text-xl font-bold">
         Semester-wise CGPA Comparison
       </h2>
 
       {/* Chart Type Selector */}
-      <div className="flex justify-center mb-4">
+      <div className="mb-4 flex justify-center">
         <select
           className="select select-bordered w-1/2 md:w-1/4"
           value={chartType}
@@ -137,6 +138,9 @@ const CompareCgpaCharts = ({ results, compareResults }) => {
 
       {/* Render Selected Chart */}
       <div>{renderChart()}</div>
+      {results.length > 0 && (
+        <ComparisonSummary results={results} compareResults={compareResults} />
+      )}
     </div>
   );
 };

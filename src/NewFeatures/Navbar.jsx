@@ -19,7 +19,7 @@ const Navbar = ({ profile, resetResults }) => {
   };
 
   return (
-    <div className="navbar mt-2 rounded-xl bg-base-100">
+    <div className="navbar mt-2 rounded-xl bg-base-100 shadow-md">
       {/* Left Side - Logo */}
       <div className="navbar-start flex items-center">
         <Link to="/" className="flex items-center text-xl">
@@ -87,7 +87,7 @@ const Navbar = ({ profile, resetResults }) => {
         <div className="navbar-end flex items-center space-x-4">
           <button
             onClick={resetResults}
-            className="menu rounded-md border-2 border-error text-text hover:bg-error hover:text-white"
+            className="menu rounded-md border-2 border-error text-text hover:bg-error hover:text-white dark:text-white"
           >
             Log Out
           </button>

@@ -59,7 +59,7 @@ const ContactPage = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="mb-6 text-center">
-          <AiOutlineMail size={48} className="mx-auto text-blue-500" />
+          <AiOutlineMail size={48} className="mx-auto text-primary" />
           <h1 className="text-2xl font-semibold text-gray-800">Contact Us</h1>
           <p className="mt-2 text-gray-500">
             We would love to hear your feedback!

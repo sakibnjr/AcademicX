@@ -31,11 +31,18 @@ const MarksheetFilter = ({ results }) => {
     }
 
     if (pointFilter) {
-      filteredResults = filteredResults.filter((course) =>
-        pointFilter === "above"
-          ? course.pointEquivalent > 3
-          : course.pointEquivalent <= 3,
-      );
+      filteredResults = filteredResults.filter((course) => {
+        if (pointFilter === "above") {
+          return course.pointEquivalent > 3;
+        } else if (pointFilter === "below") {
+          return course.pointEquivalent <= 3;
+        } else if (pointFilter === "four") {
+          return course.pointEquivalent === 4;
+        } else if (pointFilter === "failed") {
+          return course.pointEquivalent === 0;
+        }
+        return true; // Default case to handle any unexpected values
+      });
     }
 
     return filteredResults;
@@ -88,15 +95,15 @@ const MarksheetFilter = ({ results }) => {
       : 0;
 
   return (
-    <div className="mx-auto my-6 flex w-4/5 flex-col rounded-lg bg-white p-6 shadow-lg lg:flex-row">
+    <div className="mx-auto my-6 flex w-4/5 flex-col rounded-lg p-6 shadow-lg shadow-primary/15 lg:flex-row dark:text-text">
       {/* Smart Filter Summary */}
       <motion.div
-        className="mb-6 rounded-lg bg-indigo-50 p-4 shadow-md lg:mb-0 lg:mr-6 lg:w-1/3"
+        className="mb-6 rounded-lg bg-sky-50 p-4 shadow-md lg:mb-0 lg:mr-6 lg:w-1/3"
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-text mb-4 text-lg font-semibold">
+        <h2 className="mb-4 text-lg font-semibold text-text">
           Smart Filter Summary
         </h2>
 
@@ -109,7 +116,7 @@ const MarksheetFilter = ({ results }) => {
           <div className="mb-4 flex items-center gap-2">
             <div className="relative h-6 w-full overflow-hidden rounded-md bg-gray-200">
               <div
-                className="bg-primaryDark absolute left-0 top-0 h-full"
+                className="absolute left-0 top-0 h-full bg-primaryDark"
                 style={{
                   width: `${
                     (filteredCourses.length /
@@ -153,7 +160,7 @@ const MarksheetFilter = ({ results }) => {
       {/* DaisyUI Stats for CGPA */}
       <div className="lg:w-2/3">
         {/* Filter Controls */}
-        <div className="mb-6 flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
+        <div className="mb-6 flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 dark:text-white">
           {/* Semester Filter */}
           <div>
             <label className="mb-2 block font-medium text-gray-700">
@@ -205,8 +212,10 @@ const MarksheetFilter = ({ results }) => {
               className="w-full rounded-lg border border-gray-300 p-2"
             >
               <option value="">All Points</option>
+              <option value="four">4.00</option>
               <option value="above">Above 3</option>
               <option value="below">Below or Equal to 3</option>
+              <option value="failed">Failed</option>
             </select>
           </div>
         </div>
@@ -223,7 +232,7 @@ const MarksheetFilter = ({ results }) => {
                 e.target.value ? parseFloat(e.target.value) : null,
               )
             }
-            className="w-full rounded-lg border border-gray-300 p-2"
+            className="w-full rounded-lg border border-primary bg-sky-200 p-2"
           >
             <option value="">Select a Point</option>
             {[4, 3.75, 3.5, 3.25].map((point) => (

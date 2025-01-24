@@ -90,7 +90,7 @@ const ProfileAndSummary = ({
     <>
       <div className="mx-auto my-4 grid w-4/5 grid-cols-1 gap-4 md:grid-cols-6">
         {/* Profile Section */}
-        <div className="grid grid-cols-1 content-center gap-4 rounded-md bg-sky-100 p-4 md:col-span-2">
+        <div className="grid grid-cols-1 content-center gap-4 rounded-md bg-sky-100 p-4 md:col-span-2 dark:bg-primaryLight">
           <div className="flex justify-center">
             <img
               src={`https://avatar.iran.liara.run/public?name=${profile.studentName}&gender=male&size=500`}
@@ -98,13 +98,11 @@ const ProfileAndSummary = ({
               className="size-48 rounded-full object-cover"
             />
           </div>
-          <div className="flex flex-col items-center justify-center gap-2">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              {profile.studentName}
-            </h2>
-            <p className="text-gray-600">Student ID: {profile.studentId}</p>
-            <p className="text-gray-600">Dept. of {profile.departmentName}</p>
-            <p className="text-gray-600">{profile.batchNo} Batch </p>
+          <div className="flex flex-col items-center justify-center gap-2 text-gray-800 dark:text-slate-50">
+            <h2 className="text-2xl font-semibold">{profile.studentName}</h2>
+            <p>Student ID: {profile.studentId}</p>
+            <p>Dept. of {profile.departmentName}</p>
+            <p>{profile.batchNo} Batch </p>
           </div>
         </div>
 

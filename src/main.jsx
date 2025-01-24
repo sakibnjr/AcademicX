@@ -4,8 +4,6 @@ import App from "./NewFeatures/App.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { SkeletonTheme } from "react-loading-skeleton";
-//import "react-loading-skeleton/dist/skeleton.css"; // Skeleton styles
-
 import { BrowserRouter as Router } from "react-router-dom"; // Import BrowserRouter
 import "./index.css";
 

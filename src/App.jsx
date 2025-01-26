@@ -41,7 +41,7 @@ const App = () => {
   const fetchSemesterData = useCallback(async (semesterId, studentId) => {
     try {
       const response = await axios.get(
-        `http://software.diu.edu.bd:8006/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
+        `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -54,7 +54,7 @@ const App = () => {
   const fetchStudentProfile = useCallback(async (studentId) => {
     try {
       const response = await axios.get(
-        `http://software.diu.edu.bd:8006/result/studentInfo?studentId=${studentId}`,
+        `/api/result/studentInfo?studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {

@@ -15,7 +15,7 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <SkeletonTheme baseColor="#848b95" highlightColor="#444">
     <Router>
-      <Working />
+      <App />
     </Router>
   </SkeletonTheme>,
 );

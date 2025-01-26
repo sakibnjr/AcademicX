@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaCircleInfo } from "react-icons/fa6";
-
+import { GoAlert } from "react-icons/go";
 import SemesterDetails from "./SemesterDetails";
 import { motion } from "framer-motion";
 
 const SemesterTable = ({
-  retake,
   results,
   toggleSemesterDetails,
   expandedSemester,
@@ -18,14 +16,14 @@ const SemesterTable = ({
   // Function to process results based on retake inclusion
   const processResults = () => {
     const courseHighestPoints = new Map(); // Track highest pointEquivalent for each course
-
-    const courseTracker = new Map(); // Track courses and their first occurrence
     const retakeIndices = new Set(); // Track semesters with retakes
     const updatedRetakenCourses = []; // To store retaken courses per semester
+
     const updatedResults = results.map((semester, semesterIndex) => {
       let filteredCourses = semester.data;
       let retakenInThisSemester = []; // List of retaken courses in this semester
 
+      // Update courseHighestPoints to reflect the highest `pointEquivalent` for each course
       semester.data.forEach((course) => {
         if (
           courseHighestPoints.has(course.courseTitle) &&
@@ -40,22 +38,26 @@ const SemesterTable = ({
       if (!includeRetakes) {
         // Exclude retaken courses if toggled off
         filteredCourses = semester.data.filter((course) => {
-          if (courseTracker.has(course.courseTitle)) {
-            retakeIndices.add(semesterIndex); // Mark semester as having retakes
-            retakenInThisSemester.push(course.courseTitle); // Track retaken courses
-            return false; // Exclude this course
+          if (courseHighestPoints.has(course.courseTitle)) {
+            const highestPoint = courseHighestPoints.get(course.courseTitle);
+            if (course.pointEquivalent < highestPoint) {
+              // Course is a retake; exclude it
+              retakeIndices.add(semesterIndex);
+              retakenInThisSemester.push(course.courseTitle);
+              return false;
+            }
           }
-          courseTracker.set(course.courseTitle, semester.semesterName);
           return true; // Keep the course
         });
       } else {
-        // Identify retake semesters
+        // Identify retake semesters and use the highest `pointEquivalent`
         semester.data.forEach((course) => {
-          if (courseTracker.has(course.courseTitle)) {
-            retakeIndices.add(semesterIndex); // Mark semester as having retakes
-            retakenInThisSemester.push(course.courseTitle); // Track retaken courses
-          } else {
-            courseTracker.set(course.courseTitle, semester.semesterName);
+          if (courseHighestPoints.has(course.courseTitle)) {
+            const highestPoint = courseHighestPoints.get(course.courseTitle);
+            if (course.pointEquivalent < highestPoint) {
+              retakeIndices.add(semesterIndex);
+              retakenInThisSemester.push(course.courseTitle);
+            }
           }
         });
       }
@@ -63,13 +65,15 @@ const SemesterTable = ({
       // Store retaken courses per semester
       updatedRetakenCourses.push(retakenInThisSemester);
 
-      // Calculate SGPA and other values based on filtered courses
+      // Calculate SGPA using the highest `pointEquivalent`
       const totalCredits = filteredCourses.reduce(
         (sum, course) => sum + course.totalCredit,
         0,
       );
       const totalPoints = filteredCourses.reduce(
-        (sum, course) => sum + course.totalCredit * course.pointEquivalent,
+        (sum, course) =>
+          sum +
+          course.totalCredit * courseHighestPoints.get(course.courseTitle),
         0,
       );
       const sgpa =
@@ -97,27 +101,19 @@ const SemesterTable = ({
 
   return (
     <div>
-      <div
-        className="tooltip tooltip-bottom tooltip-accent my-4 flex items-center justify-center gap-2 rounded-md bg-blue-50 p-3 shadow-sm"
-        data-tip="Click on a row to view details <> Tap the button below to show/hide retaken courses."
-      >
-        <FaCircleInfo className="text-lg text-blue-500" />
-        <p className="text-sm font-medium text-blue-600">Show Instructions.</p>
+      {/* Toggle Button */}
+      <div className="mb-6 flex items-center justify-center">
+        <button
+          className={`rounded-md px-4 py-2 shadow-md ${
+            includeRetakes
+              ? "bg-green-500 text-white"
+              : "bg-gray-300 text-black"
+          }`}
+          onClick={() => setIncludeRetakes((prev) => !prev)}
+        >
+          {includeRetakes ? "Show Without Retakes" : "Show With Retakes"}
+        </button>
       </div>
-      {retake && (
-        <div className="mb-4 flex items-center justify-center">
-          <button
-            className={`rounded-md px-4 py-2 shadow-md ${
-              includeRetakes
-                ? "bg-green-500 text-white"
-                : "bg-gray-300 text-black"
-            }`}
-            onClick={() => setIncludeRetakes((prev) => !prev)}
-          >
-            {includeRetakes ? "Showing Retakes" : "Retakes Hidden"}
-          </button>
-        </div>
-      )}
 
       {/* Table Section */}
       {Array.isArray(processedResults) && processedResults.length > 0 ? (
@@ -137,6 +133,9 @@ const SemesterTable = ({
                 </th>
                 <th className="p-4 text-left text-sm font-semibold tracking-wide">
                   Total Courses Taken
+                </th>
+                <th className="p-4 text-left text-sm font-semibold tracking-wide">
+                  Retake Indicator
                 </th>
               </tr>
             </thead>
@@ -168,6 +167,14 @@ const SemesterTable = ({
                       <td className="p-4">{semester.sgpa}</td>
                       <td className="p-4">{semester.totalCredits}</td>
                       <td className="p-4">{semester.totalCourses}</td>
+                      <td className="p-4 text-center">
+                        {isRetakeSemester && (
+                          <GoAlert
+                            className="text-yellow-600"
+                            title="Retake courses detected."
+                          />
+                        )}
+                      </td>
                     </tr>
 
                     {/* Expandable Details Row */}

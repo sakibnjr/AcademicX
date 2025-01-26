@@ -17,7 +17,7 @@ const ProfileAndSummary = ({
   retake,
   retakeCourses,
 }) => {
-  const [activeView, setActiveView] = useState("slider"); // State for active view
+  const [activeView, setActiveView] = useState("table"); // State for active view
 
   const [expandedSemester, setExpandedSemester] = useState(null);
 
@@ -36,7 +36,7 @@ const ProfileAndSummary = ({
     <>
       <div className="mx-auto my-6 grid w-4/5 grid-cols-1 gap-6 md:grid-cols-6">
         {/* Profile Section */}
-        <div className="flex flex-col items-center justify-center gap-4 rounded-lg shadow-md md:col-span-2">
+        <div className="flex flex-col items-center justify-center gap-4 rounded-lg p-2 shadow-md md:col-span-2">
           <div className="flex justify-center">
             <img
               src={`https://avatar.iran.liara.run/public?name=${profile.studentName}&gender=male&size=500`}
@@ -44,13 +44,15 @@ const ProfileAndSummary = ({
               className="h-32 w-32 rounded-full object-cover ring-4 ring-blue-500"
             />
           </div>
-          <div className="text-center text-gray-800">
-            <h2 className="text-2xl font-semibold text-blue-700">
+          <div className="space-y-2 text-center text-gray-800">
+            <h2 className="text-2xl font-semibold text-primaryDark">
               {profile.studentName}
             </h2>
-            <p className="text-gray-600">Student ID: {profile.studentId}</p>
-            <p className="text-gray-600">Dept. of {profile.departmentName}</p>
-            <p className="text-gray-600">{profile.batchNo} Batch</p>
+            <p className="text-gray-600">{profile.studentId}</p>
+            <p className="rounded-md bg-primaryDark text-white">
+              {profile.deptShortName} <span className="mx-2 text-lg">|</span>{" "}
+              BATCH {profile.batchNo}
+            </p>
           </div>
         </div>
 
@@ -132,16 +134,6 @@ const ProfileAndSummary = ({
       <div className="mx-auto mb-4 flex w-4/5 justify-center gap-4">
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium ${
-            activeView === "slider"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
-          onClick={() => setActiveView("slider")}
-        >
-          View as Slider
-        </button>
-        <button
-          className={`rounded-md px-4 py-2 text-sm font-medium ${
             activeView === "table"
               ? "bg-blue-600 text-white"
               : "bg-gray-200 hover:bg-gray-300"
@@ -150,18 +142,29 @@ const ProfileAndSummary = ({
         >
           View as Table
         </button>
+        <button
+          className={`rounded-md px-4 py-2 text-sm font-medium ${
+            activeView === "slider"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+          onClick={() => setActiveView("slider")}
+        >
+          View as Slider
+        </button>
       </div>
 
       {/* Conditionally Render Slider or Table */}
       <div className="mx-auto w-4/5">
-        {activeView === "slider" ? (
-          <SemesterSlider
+        {activeView === "table" ? (
+          <SemesterTable
+            retake={retake}
             results={results}
             toggleSemesterDetails={toggleSemesterDetails}
             expandedSemester={expandedSemester}
           />
         ) : (
-          <SemesterTable
+          <SemesterSlider
             results={results}
             toggleSemesterDetails={toggleSemesterDetails}
             expandedSemester={expandedSemester}

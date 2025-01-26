@@ -30,7 +30,6 @@ const App = () => {
   const [averageCgpa, setAverageCgpa] = useState(null);
   const [totalCreditsCompleted, setTotalCreditsCompleted] = useState(null);
   const [totalSemestersCompleted, setTotalSemestersCompleted] = useState(0);
-  const [expandedSemester, setExpandedSemester] = useState(null);
   const [retake, setRetake] = useState(false);
   const [retakeCourses, setRetakeCourses] = useState(0);
 
@@ -105,6 +104,8 @@ const App = () => {
 
     const validResults = fetchedResults.filter(Boolean);
     setResults(validResults);
+
+    console.log(validResults);
 
     calculateSummary(validResults);
 
@@ -229,11 +230,6 @@ const App = () => {
     setRetakeCourses(retakeCount);
   };
 
-  // Toggle expanded details for semesters
-  const toggleSemesterDetails = (index) => {
-    setExpandedSemester(expandedSemester === index ? null : index);
-  };
-
   return (
     <div className="flex h-screen flex-col gap-10">
       <div className="mx-auto w-4/5">
@@ -261,8 +257,6 @@ const App = () => {
               totalSemestersCompleted={totalSemestersCompleted}
               results={results}
               compareResults={compareResults}
-              toggleSemesterDetails={toggleSemesterDetails}
-              expandedSemester={expandedSemester}
               loading={loading}
               retake={retake}
               retakeCourses={retakeCourses}

@@ -13,13 +13,18 @@ const ProfileAndSummary = ({
   totalSemestersCompleted,
   results,
   compareResults,
-  toggleSemesterDetails,
-  expandedSemester,
   loading,
   retake,
   retakeCourses,
 }) => {
   const [activeView, setActiveView] = useState("slider"); // State for active view
+
+  const [expandedSemester, setExpandedSemester] = useState(null);
+
+  // Toggle expanded details for semesters
+  const toggleSemesterDetails = (index) => {
+    setExpandedSemester(expandedSemester === index ? null : index);
+  };
 
   if (loading) {
     // Render skeleton while loading
@@ -52,7 +57,7 @@ const ProfileAndSummary = ({
         {/* Academic Summary */}
         <div className="grid gap-4 md:col-span-1">
           {/* CGPA Display */}
-          <div className="flex flex-col items-center justify-center gap-4 rounded-lg bg-white p-6 shadow-md">
+          <div className="flex flex-col items-center justify-center gap-4 rounded-lg p-6 shadow-md">
             <h3 className="text-center text-xl font-semibold text-green-600">
               CGPA
             </h3>
@@ -82,7 +87,7 @@ const ProfileAndSummary = ({
           </div>
 
           {/* Credit Summary */}
-          <div className="flex flex-col gap-2 rounded-lg bg-white p-4 shadow-md">
+          <div className="flex flex-col gap-2 rounded-lg p-4 shadow-md">
             <h4 className="text-center text-lg font-semibold text-gray-800">
               Total Credits
             </h4>
@@ -97,7 +102,7 @@ const ProfileAndSummary = ({
           </div>
 
           {/* Semester Summary */}
-          <div className="flex flex-col gap-2 rounded-lg bg-white p-4 shadow-md">
+          <div className="flex flex-col gap-2 rounded-lg p-4 shadow-md">
             <h4 className="text-center text-lg font-semibold text-gray-800">
               Total Semesters
             </h4>
@@ -109,7 +114,7 @@ const ProfileAndSummary = ({
 
         {/* CGPA Chart */}
         <div className="flex items-center md:col-span-3">
-          <div className="w-full max-w-full overflow-hidden rounded-lg bg-white shadow-md lg:px-2">
+          <div className="w-full max-w-full overflow-hidden rounded-lg shadow-md lg:px-2">
             {results.length > 0 ? (
               <div className="w-full">
                 <CgpaChart results={results} compareResults={compareResults} />

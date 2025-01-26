@@ -12,8 +12,6 @@ const Home = ({
   totalSemestersCompleted,
   results,
   compareResults,
-  toggleSemesterDetails,
-  expandedSemester,
   loading,
   retake,
   retakeCourses,
@@ -36,8 +34,6 @@ const Home = ({
           totalSemestersCompleted={totalSemestersCompleted}
           results={results}
           compareResults={compareResults}
-          toggleSemesterDetails={toggleSemesterDetails}
-          expandedSemester={expandedSemester}
           loading={loading}
           retake={retake}
           retakeCourses={retakeCourses}

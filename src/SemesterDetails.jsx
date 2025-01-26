@@ -1,6 +1,6 @@
 import React from "react";
 
-const SemesterDetails = ({ semester }) => {
+const SemesterDetails = ({ semester, retakenCourses = [] }) => {
   return (
     <div className="relative z-50 bg-white px-4">
       <table className="w-full table-auto border-collapse">
@@ -21,18 +21,31 @@ const SemesterDetails = ({ semester }) => {
           </tr>
         </thead>
         <tbody>
-          {semester.data.map((course, idx) => (
-            <tr key={idx} className="border-b hover:bg-sky-50">
-              <td className="border px-4 py-2 text-sm">{course.courseTitle}</td>
-              <td className="border px-4 py-2 text-sm">{course.totalCredit}</td>
-              <td className="border px-4 py-2 text-sm">
-                {course.pointEquivalent}
-              </td>
-              <td className="hidden border px-4 py-2 text-sm md:table-cell">
-                {course.gradeLetter}
-              </td>
-            </tr>
-          ))}
+          {semester.data.map((course, idx) => {
+            const isRetaken = retakenCourses.includes(course.courseTitle);
+
+            return (
+              <tr
+                key={idx}
+                className={`border-b ${
+                  isRetaken ? "bg-red-50 hover:bg-red-100" : "hover:bg-sky-50"
+                }`}
+              >
+                <td className="border px-4 py-2 text-sm">
+                  {course.courseTitle}
+                </td>
+                <td className="border px-4 py-2 text-sm">
+                  {course.totalCredit}
+                </td>
+                <td className="border px-4 py-2 text-sm">
+                  {course.pointEquivalent}
+                </td>
+                <td className="hidden border px-4 py-2 text-sm md:table-cell">
+                  {course.gradeLetter}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

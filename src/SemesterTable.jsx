@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaCircleInfo, FaRedoAlt } from "react-icons/fa6";
+import { GoAlert } from "react-icons/go";
 import SemesterDetails from "./SemesterDetails";
 import { motion } from "framer-motion";
 
@@ -8,61 +8,96 @@ const SemesterTable = ({
   toggleSemesterDetails,
   expandedSemester,
 }) => {
-  const [retakeCount, setRetakeCount] = useState(0);
+  const [includeRetakes, setIncludeRetakes] = useState(true); // Toggle state for including retakes
+  const [processedResults, setProcessedResults] = useState([]);
+  const [retakeSemesters, setRetakeSemesters] = useState([]);
+  const [retakenCourses, setRetakenCourses] = useState([]); // State for retaken courses
 
-  console.log(results);
+  // Function to process results based on retake inclusion
+  const processResults = () => {
+    const courseTracker = new Map(); // Track courses and their first occurrence
+    const retakeIndices = new Set(); // Track semesters with retakes
+    const updatedRetakenCourses = []; // To store retaken courses per semester
+    const updatedResults = results.map((semester, semesterIndex) => {
+      let filteredCourses = semester.data;
+      let retakenInThisSemester = []; // List of retaken courses in this semester
 
-  useEffect(() => {
-    // Calculate retake count
-    const allCourses = results.flatMap((semester) => semester.data || []);
-    const courseMap = new Map();
-    let count = 0;
-
-    allCourses.forEach((course) => {
-      if (courseMap.has(course.courseTitle)) {
-        count++;
+      if (!includeRetakes) {
+        // Exclude retaken courses if toggled off
+        filteredCourses = semester.data.filter((course) => {
+          if (courseTracker.has(course.courseTitle)) {
+            retakeIndices.add(semesterIndex); // Mark semester as having retakes
+            retakenInThisSemester.push(course.courseTitle); // Track retaken courses
+            return false; // Exclude this course
+          }
+          courseTracker.set(course.courseTitle, semester.semesterName);
+          return true; // Keep the course
+        });
+      } else {
+        // Identify retake semesters
+        semester.data.forEach((course) => {
+          if (courseTracker.has(course.courseTitle)) {
+            retakeIndices.add(semesterIndex); // Mark semester as having retakes
+            retakenInThisSemester.push(course.courseTitle); // Track retaken courses
+          } else {
+            courseTracker.set(course.courseTitle, semester.semesterName);
+          }
+        });
       }
-      courseMap.set(course.courseTitle, course);
+
+      // Store retaken courses per semester
+      updatedRetakenCourses.push(retakenInThisSemester);
+
+      // Calculate SGPA and other values based on filtered courses
+      const totalCredits = filteredCourses.reduce(
+        (sum, course) => sum + course.totalCredit,
+        0,
+      );
+      const totalPoints = filteredCourses.reduce(
+        (sum, course) => sum + course.totalCredit * course.pointEquivalent,
+        0,
+      );
+      const sgpa =
+        totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : "N/A";
+
+      return {
+        ...semester,
+        data: filteredCourses,
+        totalCredits,
+        sgpa,
+        totalCourses: filteredCourses.length,
+      };
     });
 
-    setRetakeCount(count);
-  }, [results]);
-
-  // Check if a semester has retake courses
-  const hasRetake = (semester) => {
-    const courseMap = new Map();
-    return semester.data.some((course) => {
-      if (courseMap.has(course.courseTitle)) {
-        return true; // Retake exists
-      }
-      courseMap.set(course.courseTitle, course);
-      return false;
-    });
+    // Update states
+    setProcessedResults(updatedResults);
+    setRetakeSemesters(Array.from(retakeIndices));
+    setRetakenCourses(updatedRetakenCourses);
   };
+
+  // Reprocess results whenever results or toggle state changes
+  useEffect(() => {
+    processResults();
+  }, [results, includeRetakes]);
 
   return (
     <div>
-      {/* Tooltip Section */}
-      <div
-        className="tooltip tooltip-bottom tooltip-accent mb-6 flex items-center justify-center gap-2 rounded-md bg-blue-50 p-3 shadow-sm"
-        data-tip="Click on a row to view semester details"
-      >
-        <FaCircleInfo className="text-lg text-blue-500" />
-        <p className="text-sm font-medium text-blue-600">
-          Click a row to expand details.
-        </p>
-      </div>
-
-      {/* Retake Count */}
-      <div className="mb-4 flex items-center justify-center gap-2 rounded-md bg-yellow-50 p-4 shadow">
-        <FaRedoAlt className="text-lg text-yellow-600" />
-        <p className="text-sm font-medium text-yellow-700">
-          Total Retake Courses: <strong>{retakeCount}</strong>
-        </p>
+      {/* Toggle Button */}
+      <div className="mb-6 flex items-center justify-center">
+        <button
+          className={`rounded-md px-4 py-2 shadow-md ${
+            includeRetakes
+              ? "bg-green-500 text-white"
+              : "bg-gray-300 text-black"
+          }`}
+          onClick={() => setIncludeRetakes((prev) => !prev)}
+        >
+          {includeRetakes ? "Show Without Retakes" : "Show With Retakes"}
+        </button>
       </div>
 
       {/* Table Section */}
-      {Array.isArray(results) && results.length > 0 ? (
+      {Array.isArray(processedResults) && processedResults.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 rounded-lg bg-white shadow-lg">
             {/* Table Header */}
@@ -88,48 +123,63 @@ const SemesterTable = ({
 
             {/* Table Body */}
             <tbody className="divide-y divide-gray-200">
-              {results.map((semester, index) => (
-                <React.Fragment key={index}>
-                  {/* Main Row */}
-                  <tr
-                    className={`cursor-pointer transition duration-300 ${
-                      expandedSemester === index
-                        ? "bg-blue-100 hover:bg-blue-200"
-                        : "hover:bg-gray-100"
-                    }`}
-                    onClick={() => toggleSemesterDetails(index)}
-                  >
-                    <td className="p-4">{semester.semesterName}</td>
-                    <td className="p-4">{semester.cgpa || "N/A"}</td>
-                    <td className="p-4">{semester.totalCredits}</td>
-                    <td className="p-4">{semester.data.length}</td>
-                    <td className="p-4 text-center">
-                      {hasRetake(semester) && (
-                        <FaRedoAlt
-                          className="text-yellow-600"
-                          title="This semester contains retake courses."
-                        />
-                      )}
-                    </td>
-                  </tr>
+              {processedResults.map((semester, index) => {
+                const isRetakeSemester = retakeSemesters.includes(index);
 
-                  {/* Expandable Details Row */}
-                  {expandedSemester === index && (
-                    <tr>
-                      <td colSpan={5} className="bg-gray-50 p-4">
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <SemesterDetails semester={semester} />
-                        </motion.div>
+                return (
+                  <React.Fragment key={index}>
+                    {/* Main Row */}
+                    <tr
+                      className={`cursor-pointer transition duration-300 ${
+                        expandedSemester === index
+                          ? "bg-blue-100 hover:bg-blue-200"
+                          : isRetakeSemester
+                            ? "bg-red-50 hover:bg-red-100"
+                            : "hover:bg-gray-100"
+                      }`}
+                      onClick={() => toggleSemesterDetails(index)}
+                      title={
+                        isRetakeSemester
+                          ? "This semester contains retaken courses."
+                          : "No retake courses in this semester."
+                      }
+                    >
+                      <td className="p-4">{semester.semesterName}</td>
+                      <td className="p-4">{semester.sgpa}</td>
+                      <td className="p-4">{semester.totalCredits}</td>
+                      <td className="p-4">{semester.totalCourses}</td>
+                      <td className="p-4 text-center">
+                        {isRetakeSemester && (
+                          <GoAlert
+                            className="text-yellow-600"
+                            title="Retake courses detected."
+                          />
+                        )}
                       </td>
                     </tr>
-                  )}
-                </React.Fragment>
-              ))}
+
+                    {/* Expandable Details Row */}
+                    {expandedSemester === index && (
+                      <tr>
+                        <td colSpan={5} className="bg-gray-50 p-4">
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <SemesterDetails
+                              semester={semester}
+                              includeRetakes={includeRetakes}
+                              retakenCourses={retakenCourses[index] || []} // Pass retaken courses
+                            />
+                          </motion.div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

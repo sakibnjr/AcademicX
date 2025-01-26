@@ -24,7 +24,7 @@ const Navbar = ({ profile, resetResults }) => {
       <div className="navbar-start flex items-center">
         <Link to="/">
           <img
-            src="../public/academicx.svg"
+            src="/academicx.svg"
             alt="Academicx"
             className="object-contain md:w-40"
           />

@@ -17,6 +17,8 @@ import NotFoundPage from "./NotFoundPage";
 import ContactPage from "./Contact";
 import FAQ from "./FAQ";
 
+import generateSemesterList from "./functions/semesters.js";
+
 const App = () => {
   const [studentId, setStudentId] = useState("");
   const [compareStudentId, setCompareStudentId] = useState("");
@@ -34,32 +36,13 @@ const App = () => {
 
   const navigate = useNavigate(); // Initialize navigate
 
-  const generateSemesterList = () => {
-    const semesters = [];
-
-    for (let year = 2015; year <= 2025; year++) {
-      const yearSuffix = year.toString().slice(-2); // Get last two digits of the year
-
-      // Spring semester
-      semesters.push({ id: `${yearSuffix}1`, name: `Spring ${year}` });
-
-      // Summer semester
-      semesters.push({ id: `${yearSuffix}2`, name: `Summer ${year}` });
-
-      // Fall semester
-      semesters.push({ id: `${yearSuffix}3`, name: `Fall ${year}` });
-    }
-
-    return semesters;
-  };
-
   const semesterList = generateSemesterList();
 
   // Unified function to fetch semester data
   const fetchSemesterData = useCallback(async (semesterId, studentId) => {
     try {
       const response = await axios.get(
-        `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
+        `http://software.diu.edu.bd:8006/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -68,41 +51,11 @@ const App = () => {
     }
   }, []);
 
-  //function to save data in local storage with expiry
-  const saveToLocalStorageWithExpiry = (key, value) => {
-    const now = new Date();
-    const item = {
-      value: value,
-      expiry: now.getTime() + 30 * 24 * 60 * 60 * 1000, // 1 month in milliseconds
-    };
-    localStorage.setItem(key, JSON.stringify(item));
-  };
-
-  const getFromLocalStorageWithExpiry = (key) => {
-    const itemStr = localStorage.getItem(key);
-    // If the item doesn't exist, return null
-    if (!itemStr) {
-      return null;
-    }
-
-    const item = JSON.parse(itemStr);
-    const now = new Date();
-
-    // Compare the expiry date with the current date
-    if (now.getTime() > item.expiry) {
-      // If expired, remove from local storage and return null
-      localStorage.removeItem(key);
-      return null;
-    }
-
-    return item.value;
-  };
-
   // Fetch student profile
   const fetchStudentProfile = useCallback(async (studentId) => {
     try {
       const response = await axios.get(
-        `/api/result/studentInfo?studentId=${studentId}`,
+        `http://software.diu.edu.bd:8006/result/studentInfo?studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -122,21 +75,6 @@ const App = () => {
     setError(null);
     resetResults();
 
-    // Check if profile data is already in local storage
-    const cachedProfile = getFromLocalStorageWithExpiry(`profile_${studentId}`);
-    const cachedResults = getFromLocalStorageWithExpiry(`results_${studentId}`);
-
-    // Save in local storage
-    if (cachedProfile && cachedResults) {
-      // Use cached data
-      setProfile(cachedProfile);
-      setResults(cachedResults);
-      calculateSummary(cachedResults);
-      setLoading(false);
-      navigate("/"); // Navigate to overview after fetching results
-      return;
-    }
-
     const studentProfile = await fetchStudentProfile(studentId);
     if (!studentProfile) {
       setError("Student profile not found.");
@@ -145,9 +83,6 @@ const App = () => {
     }
 
     setProfile(studentProfile);
-
-    // Save in local storage with expiry
-    saveToLocalStorageWithExpiry(`profile_${studentId}`, studentProfile);
 
     // Fetch results for each semester
     const fetchedResults = await Promise.all(
@@ -170,9 +105,6 @@ const App = () => {
 
     const validResults = fetchedResults.filter(Boolean);
     setResults(validResults);
-
-    // Save in local storage with expiry
-    saveToLocalStorageWithExpiry(`results_${studentId}`, validResults);
 
     calculateSummary(validResults);
 
@@ -228,6 +160,7 @@ const App = () => {
 
   // Reset results and states
   const resetResults = () => {
+    setStudentId("");
     setResults([]);
     setProfile(null);
     setCompareResults([]);

@@ -1,7 +1,6 @@
 import React from "react";
 import Button from "./Button";
 import Input from "./Input";
-
 import Text from "./Text";
 const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
   return (
@@ -11,7 +10,7 @@ const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
         setStudentId={setStudentId}
         handleFetchResults={handleFetchResults}
       />
-      <div className="my-4 flex flex-col items-center justify-center md:flex-row">
+      <div className="my-4 flex flex-col items-center justify-center gap-4 md:flex-row md:gap-0">
         <Input studentId={studentId} setStudentId={setStudentId} />
         <div className="w-full">
           <Button handleFetchResults={handleFetchResults} />

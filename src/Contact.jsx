@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
-import { AiOutlineMail } from "react-icons/ai";
+import { MdOutlineReportProblem } from "react-icons/md";
+
 import emailjs from "emailjs-com";
 
 const ContactPage = () => {
@@ -59,8 +60,10 @@ const ContactPage = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="mb-6 text-center">
-          <AiOutlineMail size={48} className="mx-auto text-primary" />
-          <h1 className="text-2xl font-semibold text-gray-800">Contact Us</h1>
+          <MdOutlineReportProblem size={48} className="mx-auto text-primary" />
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Facing a problem?
+          </h1>
           <p className="mt-2 text-gray-500">
             We would love to hear your feedback!
           </p>

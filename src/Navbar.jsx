@@ -22,9 +22,12 @@ const Navbar = ({ profile, resetResults }) => {
     <div className="navbar mt-2 rounded-xl bg-base-100 shadow-md">
       {/* Left Side - Logo */}
       <div className="navbar-start flex items-center">
-        <Link to="/" className="flex items-center text-xl">
-          Academic
-          <span className="relative -left-1 text-4xl italic">X</span>
+        <Link to="/">
+          <img
+            src="../public/academicx.svg"
+            alt="Academicx"
+            className="object-contain md:w-40"
+          />
         </Link>
       </div>
 
@@ -68,7 +71,7 @@ const Navbar = ({ profile, resetResults }) => {
               to="/contact"
               className={isActive("/contact") ? activeClass : inactiveClass}
             >
-              Contact
+              Feedback
             </Link>
           </li>
           <li>
@@ -158,7 +161,7 @@ const Navbar = ({ profile, resetResults }) => {
                   className={isActive("/contact") ? activeClass : inactiveClass}
                   onClick={handleLinkClick}
                 >
-                  Contact
+                  Feedback
                 </Link>
               </li>
               <li>

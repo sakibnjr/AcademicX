@@ -38,36 +38,37 @@ const SemesterSlider = ({
   };
 
   return (
-    <div className="slider-container">
+    <>
+      {/* Tooltip Section */}
       <div
-        className="tooltip tooltip-bottom tooltip-accent flex"
+        className="tooltip tooltip-bottom tooltip-accent my-4 flex items-center justify-center gap-2 rounded-md bg-blue-50 p-3 shadow-sm"
         data-tip="Swipe left-right <> Use keyboard arrow keys <> Click to view details"
       >
-        <p className="mt-4 flex cursor-pointer items-center gap-2 text-center text-sm text-primary">
-          Hover here for instructions
-          <span>
-            <FaCircleInfo />
-          </span>
-        </p>
+        <FaCircleInfo className="text-lg text-blue-500" />
+        <p className="text-sm font-medium text-blue-600">Show Instructions.</p>
       </div>
-      <Slider {...settings}>
-        {Array.isArray(results) && results.length > 0 ? (
-          results.map((semester, index) => (
-            <div key={index} className="my-4">
-              <Results
-                key={index}
-                semester={semester}
-                toggleSemesterDetails={toggleSemesterDetails}
-                expandedSemester={expandedSemester}
-                index={index}
-              />
+      <div className="slider-container">
+        <Slider {...settings}>
+          {Array.isArray(results) && results.length > 0 ? (
+            results.map((semester, index) => (
+              <div key={index} className="my-4">
+                <Results
+                  key={index}
+                  semester={semester}
+                  toggleSemesterDetails={toggleSemesterDetails}
+                  expandedSemester={expandedSemester}
+                  index={index}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500">
+              No results available.
             </div>
-          ))
-        ) : (
-          <div className="text-center text-gray-500">No results available.</div>
-        )}
-      </Slider>
-    </div>
+          )}
+        </Slider>
+      </div>
+    </>
   );
 };
 

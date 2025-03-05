@@ -22,7 +22,7 @@ ChartJS.register(
   Legend,
 );
 
-const CgpaChart = ({ results }) => {
+const CgpaBox = ({ results }) => {
   const data = {
     labels: results.map((semester) => semester.semesterName),
     datasets: [
@@ -70,11 +70,27 @@ const CgpaChart = ({ results }) => {
   };
 
   return (
-    <div className="my-4">
+    <div>
       <h2 className="mb-4 text-center text-xl font-bold">Semester-wise SGPA</h2>
       <Line data={data} options={options} />
     </div>
   );
 };
+
+function CgpaChart({ results }) {
+  return (
+    <div className="flex items-center md:col-span-3">
+      {results.length > 0 ? (
+        <div className="w-full">
+          <CgpaBox results={results} />
+        </div>
+      ) : (
+        <p className="flex items-center justify-center text-gray-500">
+          No data available
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default CgpaChart;

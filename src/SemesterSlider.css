@@ -1,9 +1,0 @@
-/* SemesterSlider.css */
-.slick-dots li button {
-  background-color: rgba(75, 192, 192, 0.6); /* Inactive dot color */
-  border-radius: 50%; /* Make dots circular */
-}
-
-.slick-dots li.slick-active button {
-  background-color: rgba(255, 99, 132, 1); /* Active dot color */
-}

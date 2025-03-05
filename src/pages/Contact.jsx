@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { toast, Toaster } from "react-hot-toast";
 import { MdOutlineReportProblem } from "react-icons/md";
-
 import emailjs from "emailjs-com";
 
 const ContactPage = () => {
@@ -19,9 +18,8 @@ const ContactPage = () => {
       return;
     }
 
-    // EmailJS parameters
     const emailParams = {
-      to_email: "test@mail.com", // The recipient email
+      to_email: "test@mail.com",
       from_name: name,
       message: message,
     };
@@ -51,24 +49,21 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="mx-auto my-auto flex w-4/5 items-center justify-center">
+    <div className="mx-auto w-4/5 px-4 py-12 sm:px-6">
       <Toaster />
       <motion.div
-        className="w-full rounded-lg bg-white p-6 shadow-lg"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="bg-white"
       >
-        <div className="mb-6 text-center">
-          <MdOutlineReportProblem size={48} className="mx-auto text-primary" />
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Facing a problem?
+        <div className="mb-8 text-center">
+          <h1 className="mt-4 text-2xl font-semibold text-gray-900">
+            Get in Touch
           </h1>
-          <p className="mt-2 text-gray-500">
-            We would love to hear your feedback!
-          </p>
+          <p className="mt-2 text-gray-600">We’d love to hear your feedback.</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label
               htmlFor="name"
@@ -79,10 +74,10 @@ const ContactPage = () => {
             <input
               id="name"
               type="text"
-              placeholder="Enter your name"
+              placeholder="Your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
             />
           </div>
           <div>
@@ -94,18 +89,18 @@ const ContactPage = () => {
             </label>
             <textarea
               id="message"
-              placeholder="Write your message"
+              placeholder="Your message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
               rows="4"
             />
           </div>
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             Send Feedback
           </motion.button>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import CompareCgpaChart from "./CompareCgpaChart";
-import Loader from "./Loader";
+import CompareCgpaChart from "../components/compare/CompareCgpaChart";
+import Loader from "../components/Loader";
 
 const Compare = ({
   results,
@@ -31,7 +31,7 @@ const Compare = ({
           />
           <button
             onClick={fetchCompareResults} // Use the wrapper function
-            className="bg-primaryDark rounded-lg p-3 text-white transition duration-300"
+            className="rounded-lg bg-primaryDark p-3 text-white transition duration-300"
           >
             <AiOutlineSearch size={24} />
           </button>

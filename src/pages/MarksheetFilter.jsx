@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "daisyui/dist/full.css"; // Import DaisyUI
 
-const MarksheetFilter = ({ results }) => {
+const MarksheetFilter = ({ results, averageCgpa }) => {
   const [semesterFilter, setSemesterFilter] = useState("");
   const [creditFilter, setCreditFilter] = useState(null);
   const [pointFilter, setPointFilter] = useState(null);
@@ -79,19 +78,10 @@ const MarksheetFilter = ({ results }) => {
   const modifiedAverageCGPA =
     selectedPoint !== null ? calculateModifiedAverageCGPA() : "N/A";
 
-  const averageCGPA = (
-    results
-      .flatMap((semester) => semester.data)
-      .reduce(
-        (sum, course) => sum + course.pointEquivalent * course.totalCredit,
-        0,
-      ) / totalCredits
-  ).toFixed(2);
-
-  // Calculate percentage improvement
+  // Calculate percentage improvement using averageCgpa from props
   const improvementPercentage =
-    averageCGPA && modifiedAverageCGPA
-      ? (((modifiedAverageCGPA - averageCGPA) / averageCGPA) * 100).toFixed(2)
+    averageCgpa && modifiedAverageCGPA !== "N/A"
+      ? (((modifiedAverageCGPA - averageCgpa) / averageCgpa) * 100).toFixed(2)
       : 0;
 
   return (
@@ -107,7 +97,7 @@ const MarksheetFilter = ({ results }) => {
           Smart Filter Summary
         </h2>
 
-        {/* Circular Progress for Matching Courses */}
+        {/* Matching Courses */}
         <div className="mt-6">
           <h3 className="mb-2 text-center text-lg font-medium text-gray-600">
             Matching Courses
@@ -135,7 +125,7 @@ const MarksheetFilter = ({ results }) => {
           {/* Original CGPA */}
           <div className="stat shadow-lg">
             <div className="stat-title">Original CGPA</div>
-            <div className="stat-value">{averageCGPA}</div>
+            <div className="stat-value">{averageCgpa}</div>
             <div className="stat-desc">CGPA before modification</div>
           </div>
 
@@ -157,7 +147,7 @@ const MarksheetFilter = ({ results }) => {
         </div>
       </motion.div>
 
-      {/* DaisyUI Stats for CGPA */}
+      {/* Filter Controls and Results */}
       <div className="lg:w-2/3">
         {/* Filter Controls */}
         <div className="mb-6 flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 dark:text-white">

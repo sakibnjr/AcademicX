@@ -8,18 +8,20 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import MarksheetFilter from "./MarksheetFilter";
-import Compare from "./Compare";
-import Home from "./Home";
-import NotFoundPage from "./NotFoundPage";
-import ContactPage from "./Contact";
-import FAQ from "./FAQ";
+import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";
+import MarksheetFilter from "./pages/MarksheetFilter.jsx";
+import Compare from "./pages/Compare.jsx";
+import Home from "./pages/Home.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
+import ContactPage from "./pages/Contact.jsx";
+import FAQ from "./pages/FAQ.jsx";
 
 import generateSemesterList from "./functions/semesters.js";
 
 const App = () => {
+  const apiUrl = import.meta.env.VITE_DEPLOY_API;
+
   const [studentId, setStudentId] = useState("");
   const [compareStudentId, setCompareStudentId] = useState("");
   const [profile, setProfile] = useState(null);
@@ -41,7 +43,7 @@ const App = () => {
   const fetchSemesterData = useCallback(async (semesterId, studentId) => {
     try {
       const response = await axios.get(
-        `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
+        `${apiUrl}?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -54,7 +56,7 @@ const App = () => {
   const fetchStudentProfile = useCallback(async (studentId) => {
     try {
       const response = await axios.get(
-        `/api/result/studentInfo?studentId=${studentId}`,
+        `${apiUrl}/studentInfo?studentId=${studentId}`,
       );
       return response.data;
     } catch (err) {
@@ -105,20 +107,17 @@ const App = () => {
     const validResults = fetchedResults.filter(Boolean);
     setResults(validResults);
 
-    console.log(validResults);
-
     calculateSummary(validResults);
 
     if (validResults.length === 0) {
       setError("No data found for the provided Student ID.");
     } else {
-      navigate("/"); // Navigate to overview after fetching results
+      navigate("/");
     }
 
     setLoading(false);
   };
 
-  // Handle comparing results for another student
   const handleCompareResults = async () => {
     if (!compareStudentId) {
       setError("Please enter a valid second Student ID.");
@@ -128,7 +127,6 @@ const App = () => {
     setLoading(true);
     setError(null);
 
-    // Fetch results for comparison
     const fetchedCompareResults = await Promise.all(
       semesterList.map(async (semester) => {
         const data = await fetchSemesterData(semester.id, compareStudentId);
@@ -151,7 +149,7 @@ const App = () => {
     setCompareResults(validCompareResults);
 
     if (validCompareResults.length > 0) {
-      navigate("/compare"); // Navigate to compare page after fetching results
+      navigate("/compare");
     } else {
       setError("No comparison data found for the provided Student ID.");
     }
@@ -242,7 +240,6 @@ const App = () => {
         </div>
       )}
 
-      {/* Define Routes */}
       <Routes>
         <Route
           path="/"
@@ -268,7 +265,7 @@ const App = () => {
           path="/filter"
           element={
             results && profile ? (
-              <MarksheetFilter results={results} />
+              <MarksheetFilter results={results} averageCgpa={averageCgpa} />
             ) : (
               <Navigate to="/" />
             )

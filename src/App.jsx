@@ -20,8 +20,6 @@ import FAQ from "./pages/FAQ.jsx";
 import generateSemesterList from "./functions/semesters.js";
 
 const App = () => {
-  const apiUrl = import.meta.env.VITE_DEPLOY_API;
-
   const [studentId, setStudentId] = useState("");
   const [compareStudentId, setCompareStudentId] = useState("");
   const [profile, setProfile] = useState(null);

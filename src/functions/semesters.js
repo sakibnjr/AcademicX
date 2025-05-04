@@ -1,7 +1,7 @@
 const generateSemesterList = () => {
   const semesters = [];
 
-  for (let year = 2015; year <= 2025; year++) {
+  for (let year = 2020; year <= 2025; year++) {
     const yearSuffix = year.toString().slice(-2); // Get last two digits of the year
 
     // Spring semester

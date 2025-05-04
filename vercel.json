@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/result",
-      "destination": "http://software.diu.edu.bd:8006/result"
+      "destination": "http://peoplepulse.diu.edu.bd:8189/result"
     },
     {
       "source": "/api/result/studentInfo",
-      "destination": "http://software.diu.edu.bd:8006/result/studentInfo"
+      "destination": "http://peoplepulse.diu.edu.bd:8189/result/studentInfo"
     },
     {
       "source": "/:path*",

@@ -68,13 +68,13 @@ const HeroSection = ({ studentId, setStudentId, handleFetchResults, isLoading = 
             className="mb-6 md:mb-8"
           >
             <span className="inline-block px-3 py-1.5 rounded-full bg-blue-100 text-blue-600 text-sm font-medium mb-3 md:mb-4 border border-blue-200">
-              Academic Performance Analyzer
+              DIU Result Analyzer
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-4 md:mb-6 leading-tight">
-              Transform Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Academic Journey</span> with Data-Driven Insights
+              Analyze Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Academic Results</span> with Ease
             </h1>
             <p className="text-lg md:text-xl text-slate-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-              Get comprehensive insights into your academic performance. Track your SGPA, analyze course-wise performance, and identify areas for improvement.
+              Track your SGPA, analyze performance, and identify areas for improvement.
             </p>
           </motion.div>
 
@@ -85,22 +85,27 @@ const HeroSection = ({ studentId, setStudentId, handleFetchResults, isLoading = 
           >
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
+                <label htmlFor="student-id-input" className="sr-only">
+                  Student ID
+                </label>
                 <input
+                  id="student-id-input"
                   type="text"
                   value={studentId}
                   onChange={(e) => setStudentId(e.target.value)}
                   placeholder="Enter your student ID to analyze results..."
-                  className="w-full px-4 py-3 rounded-xl text-slate-900 bg-white/95 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-lg border border-slate-200"
+                  className="w-full px-4 py-3 pr-12 rounded-xl text-slate-900 bg-white/95 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-lg border border-slate-200 relative z-10"
                 />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none z-20">
                   <FaGraduationCap className="h-5 w-5 text-slate-400" />
                 </div>
               </div>
               <button
                 type="submit"
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+                disabled={isLoading}
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Analyze Result
+                {isLoading ? 'Analyzing...' : 'Analyze Result'}
               </button>
             </form>
           </motion.div>

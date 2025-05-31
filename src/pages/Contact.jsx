@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { MdEmail, MdLocationOn } from "react-icons/md";
 
 const ContactPage = () => {
@@ -70,12 +71,12 @@ const ContactPage = () => {
                   For any inquiries or support, please reach out to us via email. We typically respond to all inquiries within 24-48 hours.
                 </p>
                 <div className="pt-4">
-                  <a
-                    href="/faq"
+                  <Link
+                    to="/faq"
                     className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-xl text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors duration-200"
                   >
                     Visit FAQ
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

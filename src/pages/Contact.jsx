@@ -1,111 +1,87 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { toast, Toaster } from "react-hot-toast";
-import { MdOutlineReportProblem } from "react-icons/md";
-import emailjs from "emailjs-com";
+import { MdEmail, MdLocationOn } from "react-icons/md";
 
 const ContactPage = () => {
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!name || !message) {
-      toast.error("Please fill out all fields!", {
-        position: "top-center",
-      });
-      return;
-    }
-
-    const emailParams = {
-      to_email: "test@mail.com",
-      from_name: name,
-      message: message,
-    };
-
-    emailjs
-      .send(
-        "", // Replace with your EmailJS service ID
-        "", // Replace with your EmailJS template ID
-        emailParams,
-        "", // Replace with your EmailJS user ID
-      )
-      .then(
-        () => {
-          toast.success("Feedback sent successfully!", {
-            position: "top-center",
-          });
-          setName("");
-          setMessage("");
-        },
-        (error) => {
-          toast.error("Failed to send feedback. Please try again.", {
-            position: "top-center",
-          });
-          console.error("EmailJS Error:", error);
-        },
-      );
-  };
-
   return (
-    <div className="mx-auto w-4/5 px-4 py-12 sm:px-6">
-      <Toaster />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white"
-      >
-        <div className="mb-8 text-center">
-          <h1 className="mt-4 text-2xl font-semibold text-gray-900">
-            Get in Touch
-          </h1>
-          <p className="mt-2 text-gray-600">We’d love to hear your feedback.</p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
-            />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-24 pb-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-4"
+        >
+          <span className="inline-block px-3 py-1.5 rounded-full bg-blue-100 text-blue-600 text-sm font-medium mb-4 border border-blue-200">
+            Contact
+          </span>
+         
+          <p className="text-lg text-slate-600">
+            Have questions? We're here to help.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-8 border border-slate-200"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Contact Information */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-slate-800 mb-6">
+                Contact Information
+              </h2>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="p-2 rounded-lg bg-blue-100">
+                    <MdEmail className="text-blue-600 text-xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-slate-800">Email</h3>
+                    <a
+                      href="mailto:sakibnjr@proton.me"
+                      className="text-slate-600 hover:text-blue-600 transition-colors duration-200"
+                    >
+                      sakibnjr@proton.me
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="p-2 rounded-lg bg-blue-100">
+                    <MdLocationOn className="text-blue-600 text-xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-slate-800">Location</h3>
+                    <p className="text-slate-600">Dhaka, Bangladesh</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-slate-800 mb-6">
+                Need Help?
+              </h2>
+              <div className="space-y-4">
+                <p className="text-slate-600">
+                  For any inquiries or support, please reach out to us via email. We typically respond to all inquiries within 24-48 hours.
+                </p>
+                <div className="pt-4">
+                  <a
+                    href="/faq"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-xl text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors duration-200"
+                  >
+                    Visit FAQ
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <label
-              htmlFor="message"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Message
-            </label>
-            <textarea
-              id="message"
-              placeholder="Your message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
-              rows="4"
-            />
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Send Feedback
-          </motion.button>
-        </form>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

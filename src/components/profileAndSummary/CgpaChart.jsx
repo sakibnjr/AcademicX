@@ -5,21 +5,24 @@ import {
   CategoryScale,
   LinearScale,
   LineElement,
-  PointElement, // Add PointElement
+  PointElement,
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from "chart.js";
+import { motion } from "framer-motion";
 
 // Register all necessary components
 ChartJS.register(
   CategoryScale,
   LinearScale,
   LineElement,
-  PointElement, // Register PointElement
+  PointElement,
   Title,
   Tooltip,
   Legend,
+  Filler
 );
 
 const CgpaBox = ({ results }) => {
@@ -27,68 +30,125 @@ const CgpaBox = ({ results }) => {
     labels: results.map((semester) => semester.semesterName),
     datasets: [
       {
-        label: "",
+        label: "CGPA",
         data: results.map((semester) => semester.cgpa),
-        backgroundColor: "rgba(110, 167, 240, 1)",
-        borderColor: "rgba(24, 112, 224, 1)",
+        backgroundColor: "rgba(99, 102, 241, 0.1)",
+        borderColor: "rgba(99, 102, 241, 1)",
         borderWidth: 2,
-        fill: true, // Fill under the line
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: "rgba(99, 102, 241, 1)",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top",
-      },
-      title: {
         display: false,
-        text: "",
       },
       tooltip: {
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        titleColor: "#1f2937",
+        bodyColor: "#1f2937",
+        borderColor: "rgba(99, 102, 241, 0.2)",
+        borderWidth: 1,
+        padding: 12,
+        boxPadding: 6,
+        usePointStyle: true,
         callbacks: {
-          label: (tooltipItem) => `${tooltipItem.raw.toFixed(2)} CGPA`,
+          label: (tooltipItem) => `CGPA: ${tooltipItem.raw.toFixed(2)}`,
+          title: (tooltipItems) => `Semester ${tooltipItems[0].label}`,
         },
       },
     },
     scales: {
       y: {
         beginAtZero: true,
-        title: {
-          display: true,
-          text: "CGPA",
+        grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+          drawBorder: false,
+        },
+        ticks: {
+          color: "#6b7280",
+          font: {
+            size: 12,
+          },
+          callback: (value) => value.toFixed(2),
+        },
+        border: {
+          display: false,
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: "#6b7280",
+          font: {
+            size: 12,
+          },
+        },
+        border: {
+          display: false,
         },
       },
     },
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
     elements: {
       line: {
-        tension: 0.4, // Smooth line
+        tension: 0.4,
       },
     },
   };
 
   return (
-    <div>
-      <h2 className="mb-4 text-center text-xl font-bold">Semester-wise SGPA</h2>
-      <Line data={data} options={options} />
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full"
+    >
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-gray-900">CGPA Progress</h2>
+        <p className="mt-1 text-sm text-gray-600">Track your academic performance over semesters</p>
+      </div>
+      <div className="h-[300px] w-full">
+        <Line data={data} options={options} />
+      </div>
+    </motion.div>
   );
 };
 
 function CgpaChart({ results }) {
-  return (
-    <div className="flex items-center md:col-span-3">
-      {results.length > 0 ? (
-        <div className="w-full">
-          <CgpaBox results={results} />
+  if (!results || results.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex h-[300px] items-center justify-center rounded-lg border border-gray-200 bg-gray-50"
+      >
+        <div className="text-center">
+          <p className="text-gray-500">No data available</p>
+          <p className="mt-1 text-sm text-gray-400">Your CGPA history will appear here</p>
         </div>
-      ) : (
-        <p className="flex items-center justify-center text-gray-500">
-          No data available
-        </p>
-      )}
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="w-full">
+      <CgpaBox results={results} />
     </div>
   );
 }

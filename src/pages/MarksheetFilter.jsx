@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import "react-circular-progressbar/dist/styles.css";
-import "daisyui/dist/full.css"; // Import DaisyUI
+import { FaFilter, FaChartLine, FaGraduationCap } from "react-icons/fa";
 
 const MarksheetFilter = ({ results, averageCgpa }) => {
   const [semesterFilter, setSemesterFilter] = useState("");
@@ -40,7 +39,7 @@ const MarksheetFilter = ({ results, averageCgpa }) => {
         } else if (pointFilter === "failed") {
           return course.pointEquivalent === 0;
         }
-        return true; // Default case to handle any unexpected values
+        return true;
       });
     }
 
@@ -78,199 +77,240 @@ const MarksheetFilter = ({ results, averageCgpa }) => {
   const modifiedAverageCGPA =
     selectedPoint !== null ? calculateModifiedAverageCGPA() : "N/A";
 
-  // Calculate percentage improvement using averageCgpa from props
   const improvementPercentage =
     averageCgpa && modifiedAverageCGPA !== "N/A"
       ? (((modifiedAverageCGPA - averageCgpa) / averageCgpa) * 100).toFixed(2)
       : 0;
 
   return (
-    <div className="mx-auto my-6 flex w-4/5 flex-col rounded-lg p-6 shadow-lg shadow-primary/15 lg:flex-row dark:text-text">
-      {/* Smart Filter Summary */}
-      <motion.div
-        className="mb-6 rounded-lg bg-sky-50 p-4 shadow-md lg:mb-0 lg:mr-6 lg:w-1/3"
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="mb-4 text-lg font-semibold text-text">
-          Smart Filter Summary
-        </h2>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-20 pb-8">
+      <div className="mx-auto w-4/5">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-4 sm:mb-6"
+        >
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Smart Filter</h1>
+          <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">
+            Filter and analyze your academic performance
+          </p>
+        </motion.div>
 
-        {/* Matching Courses */}
-        <div className="mt-6">
-          <h3 className="mb-2 text-center text-lg font-medium text-gray-600">
-            Matching Courses
-          </h3>
-
-          <div className="mb-4 flex items-center gap-2">
-            <div className="relative h-6 w-full overflow-hidden rounded-md bg-gray-200">
-              <div
-                className="absolute left-0 top-0 h-full bg-primaryDark"
-                style={{
-                  width: `${
-                    (filteredCourses.length /
-                      results.flatMap((semester) => semester.data).length) *
-                    100
-                  }%`,
-                }}
-              />
-            </div>
-            <div className="text-center text-lg font-bold text-blue-600">
-              {filteredCourses.length}
-            </div>
-          </div>
-        </div>
-        <div className="mb-6">
-          {/* Original CGPA */}
-          <div className="stat shadow-lg">
-            <div className="stat-title">Original CGPA</div>
-            <div className="stat-value">{averageCgpa}</div>
-            <div className="stat-desc">CGPA before modification</div>
-          </div>
-
-          {/* Modified CGPA */}
-          <div className="stat mt-4 shadow-lg">
-            <div className="stat-title">Modified CGPA</div>
-            <div className="stat-value">{modifiedAverageCGPA}</div>
-            <div className="stat-desc">CGPA after selected points</div>
-          </div>
-
-          {/* Percentage Improvement */}
-          <div className="stat mt-4 shadow-lg">
-            <div className="stat-title">Improvement</div>
-            <div className="stat-value text-green-500">
-              {improvementPercentage}%
-            </div>
-            <div className="stat-desc">Percentage improvement in CGPA</div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Filter Controls and Results */}
-      <div className="lg:w-2/3">
-        {/* Filter Controls */}
-        <div className="mb-6 flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0 dark:text-white">
-          {/* Semester Filter */}
-          <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Semester
-            </label>
-            <select
-              value={semesterFilter}
-              onChange={(e) => setSemesterFilter(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-2"
-            >
-              <option value="">All Semesters</option>
-              {results.map((semester, index) => (
-                <option key={index} value={semester.semesterName}>
-                  {semester.semesterName}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Credit Filter */}
-          <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              Credit Hours
-            </label>
-            <select
-              value={creditFilter || ""}
-              onChange={(e) =>
-                setCreditFilter(
-                  e.target.value ? parseInt(e.target.value) : null,
-                )
-              }
-              className="w-full rounded-lg border border-gray-300 p-2"
-            >
-              <option value="">All Credits</option>
-              <option value="1">1 Credit</option>
-              <option value="2">2 Credits</option>
-              <option value="3">3 Credits</option>
-            </select>
-          </div>
-
-          {/* CGPA Filter */}
-          <div>
-            <label className="mb-2 block font-medium text-gray-700">
-              CGPA Points
-            </label>
-            <select
-              value={pointFilter || ""}
-              onChange={(e) => setPointFilter(e.target.value || null)}
-              className="w-full rounded-lg border border-gray-300 p-2"
-            >
-              <option value="">All Points</option>
-              <option value="four">4.00</option>
-              <option value="above">Above 3</option>
-              <option value="below">Below or Equal to 3</option>
-              <option value="failed">Failed</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Selected Point Input */}
-        <div className="mb-6">
-          <label className="mb-2 block font-medium text-gray-700">
-            Select Point to Recalculate Average CGPA
-          </label>
-          <select
-            value={selectedPoint || ""}
-            onChange={(e) =>
-              setSelectedPoint(
-                e.target.value ? parseFloat(e.target.value) : null,
-              )
-            }
-            className="w-full rounded-lg border border-primary bg-sky-200 p-2"
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Summary Card */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-1 space-y-4"
           >
-            <option value="">Select a Point</option>
-            {[4, 3.75, 3.5, 3.25].map((point) => (
-              <option key={point} value={point}>
-                {point}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm p-4 border border-slate-200">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 rounded-lg bg-blue-100">
+                  <FaChartLine className="text-blue-600 text-lg" />
+                </div>
+                <h2 className="text-lg font-semibold text-slate-800">
+                  Performance Summary
+                </h2>
+              </div>
 
-        {/* Filtered Results */}
-        <div className="max-h-80 overflow-y-auto">
-          {filteredCourses.length > 0 ? (
-            <table className="min-w-full overflow-hidden rounded-lg border border-gray-300 bg-white">
-              <thead>
-                <tr>
-                  <th className="sticky top-0 border-b bg-white px-4 py-2">
-                    Course Name
-                  </th>
-                  <th className="sticky top-0 border-b bg-white px-4 py-2">
+              <div className="space-y-3">
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="text-sm text-slate-600 mb-0.5">Original CGPA</div>
+                  <div className="text-xl font-bold text-slate-800">{averageCgpa}</div>
+                </div>
+
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="text-sm text-slate-600 mb-0.5">Modified CGPA</div>
+                  <div className="text-xl font-bold text-slate-800">{modifiedAverageCGPA}</div>
+                </div>
+
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <div className="text-sm text-slate-600 mb-0.5">Improvement</div>
+                  <div className="text-xl font-bold text-green-600">
+                    {improvementPercentage}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm p-4 border border-slate-200">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 rounded-lg bg-blue-100">
+                  <FaFilter className="text-blue-600 text-lg" />
+                </div>
+                <h2 className="text-lg font-semibold text-slate-800">
+                  Matching Courses
+                </h2>
+              </div>
+
+              <div className="mb-3">
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-blue-500 to-indigo-500"
+                    style={{
+                      width: `${
+                        (filteredCourses.length /
+                          results.flatMap((semester) => semester.data).length) *
+                        100
+                      }%`,
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="text-center">
+                <span className="text-xl font-bold text-blue-600">
+                  {filteredCourses.length}
+                </span>
+                <span className="text-slate-600 ml-2 text-sm">courses matched</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Filter Controls and Results */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-2 space-y-4"
+          >
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm p-4 border border-slate-200">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-1.5 rounded-lg bg-blue-100">
+                  <FaGraduationCap className="text-blue-600 text-lg" />
+                </div>
+                <h2 className="text-lg font-semibold text-slate-800">
+                  Filter Controls
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     Semester
-                  </th>
-                  <th className="sticky top-0 border-b bg-white px-4 py-2">
-                    Credit
-                  </th>
-                  <th className="sticky top-0 border-b bg-white px-4 py-2">
-                    Point
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCourses.map((course, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="border-b px-4 py-2">{course.courseTitle}</td>
-                    <td className="border-b px-4 py-2">
-                      {course.semesterName}
-                    </td>
-                    <td className="border-b px-4 py-2">{course.totalCredit}</td>
-                    <td className="border-b px-4 py-2">
-                      {course.pointEquivalent}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="text-center text-gray-500">No courses found.</p>
-          )}
+                  </label>
+                  <select
+                    value={semesterFilter}
+                    onChange={(e) => setSemesterFilter(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm text-sm"
+                  >
+                    <option value="">All Semesters</option>
+                    {results.map((semester, index) => (
+                      <option key={index} value={semester.semesterName}>
+                        {semester.semesterName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Credit Hours
+                  </label>
+                  <select
+                    value={creditFilter || ""}
+                    onChange={(e) =>
+                      setCreditFilter(
+                        e.target.value ? parseInt(e.target.value) : null,
+                      )
+                    }
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm text-sm"
+                  >
+                    <option value="">All Credits</option>
+                    <option value="1">1 Credit</option>
+                    <option value="2">2 Credits</option>
+                    <option value="3">3 Credits</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    CGPA Points
+                  </label>
+                  <select
+                    value={pointFilter || ""}
+                    onChange={(e) => setPointFilter(e.target.value || null)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm text-sm"
+                  >
+                    <option value="">All Points</option>
+                    <option value="four">4.00</option>
+                    <option value="above">Above 3</option>
+                    <option value="below">Below or Equal to 3</option>
+                    <option value="failed">Failed</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Select Point to Recalculate Average CGPA
+                </label>
+                <select
+                  value={selectedPoint || ""}
+                  onChange={(e) =>
+                    setSelectedPoint(
+                      e.target.value ? parseFloat(e.target.value) : null,
+                    )
+                  }
+                  className="w-full px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm"
+                >
+                  <option value="">Select a Point</option>
+                  {[4, 3.75, 3.5, 3.25].map((point) => (
+                    <option key={point} value={point}>
+                      {point}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="max-h-80 overflow-y-auto rounded-lg border border-slate-200">
+                {filteredCourses.length > 0 ? (
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50 sticky top-0">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          Course Name
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          Semester
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          Credit
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          Point
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {filteredCourses.map((course, index) => (
+                        <tr key={index} className="hover:bg-slate-50 transition-colors duration-200">
+                          <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-900">
+                            {course.courseTitle}
+                          </td>
+                          <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-900">
+                            {course.semesterName}
+                          </td>
+                          <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-900">
+                            {course.totalCredit}
+                          </td>
+                          <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-900">
+                            {course.pointEquivalent}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-slate-500 text-sm">No courses found.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

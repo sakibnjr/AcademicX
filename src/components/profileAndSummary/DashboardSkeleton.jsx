@@ -4,55 +4,88 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const DashboardSkeleton = () => {
   return (
-    <div>
-      <div className="mx-auto my-4 grid w-4/5 grid-cols-1 gap-4 md:grid-cols-6">
-        {/* Skeleton for Profile Section */}
-        <div className="grid grid-cols-1 content-center gap-4 rounded-md p-4 shadow-md md:col-span-2">
-          <div className="flex justify-center">
-            <Skeleton circle={true} height={100} width={100} />
-          </div>
-
-          <div className="flex flex-col items-center justify-center gap-2">
-            <Skeleton width={300} height={40} />
-            <Skeleton width={150} height={20} />
-            <Skeleton width={180} height={20} />
-          </div>
+    <div className="min-h-screen bg-gray-50 py-20">
+      <div className="w-4/5 mx-auto">
+        {/* Header Section Skeleton */}
+        <div className="mb-6 sm:mb-8">
+          <Skeleton height={32} width={250} className="mb-2" />
+          <Skeleton height={20} width={300} />
         </div>
 
-        {/* Skeleton for Academic Summary */}
-        <div className="grid grid-cols-1 gap-4 md:col-span-1">
-          <div className="flex flex-col items-center justify-center gap-2 p-2 shadow-md">
-            <Skeleton width={60} height={20} />
-            <Skeleton circle={true} width={70} height={70} />
-          </div>
-          <div className="p-2 text-center shadow-md">
-            <div className="stat-title">
-              <Skeleton width={120} height={20} />
+        <div className="space-y-4 sm:space-y-6">
+          {/* Summary Stats Section Skeleton */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="border rounded-xl shadow-sm p-4 sm:p-6">
+              <Skeleton height={24} width={120} className="mb-2" />
+              <Skeleton height={36} width={80} />
             </div>
-            <div className="stat-value">
-              <Skeleton width={80} height={20} />
+            <div className="border rounded-xl shadow-sm p-4 sm:p-6">
+              <Skeleton height={24} width={140} className="mb-2" />
+              <Skeleton height={36} width={80} />
             </div>
-          </div>
-          <div className="p-2 text-center shadow-md">
-            <div className="stat-title">
-              <Skeleton width={120} height={20} />
-            </div>
-            <div className="stat-value">
-              <Skeleton width={80} height={20} />
+            <div className="border rounded-xl shadow-sm p-4 sm:p-6">
+              <Skeleton height={24} width={100} className="mb-2" />
+              <Skeleton height={36} width={80} />
             </div>
           </div>
-        </div>
 
-        {/* Skeleton for CGPA Chart */}
-        <div className="p-2 shadow-md md:col-span-3">
-          <Skeleton height={300} />
-        </div>
-      </div>
-      {/* Skeleton for Semester Slider */}
-      <div className="mx-auto w-4/5 text-center">
-        <div className="flex justify-center gap-4">
-          <Skeleton width={100} height={25} />
-          <Skeleton width={100} height={25} />
+          {/* Profile and CGPA Chart Section Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden lg:col-span-2">
+              <div className="p-6">
+                <div className="flex flex-col items-center justify-center">
+                  <Skeleton circle height={128} width={128} className="mb-4" />
+                  <Skeleton height={28} width={200} className="mb-2" />
+                  <Skeleton height={20} width={150} className="mb-4" />
+                  <Skeleton height={32} width={180} />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 lg:col-span-4">
+              <Skeleton height={300} />
+            </div>
+          </div>
+
+          {/* Semester Details Section Skeleton */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-gray-100">
+              <Skeleton height={24} width={150} className="mb-2" />
+              <Skeleton height={16} width={250} />
+            </div>
+            <div className="p-4">
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      {["Semester", "SGPA", "Credits", "Courses"].map((header) => (
+                        <th key={header} className="px-4 py-3">
+                          <Skeleton height={16} width={80} />
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {[1, 2, 3].map((index) => (
+                      <tr key={index}>
+                        <td className="px-4 py-3">
+                          <Skeleton height={20} width={120} />
+                        </td>
+                        <td className="px-4 py-3">
+                          <Skeleton height={20} width={60} />
+                        </td>
+                        <td className="px-4 py-3">
+                          <Skeleton height={20} width={40} />
+                        </td>
+                        <td className="px-4 py-3">
+                          <Skeleton height={20} width={40} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

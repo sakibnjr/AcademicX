@@ -13,6 +13,7 @@ import {
   RadialLinearScale,
   Filler,
 } from "chart.js";
+import { FaChartBar, FaChartLine, FaChartPie, FaLayerGroup } from "react-icons/fa";
 import ComparisonSummary from "./ComparisonSummary";
 
 // Register Chart.js components
@@ -30,7 +31,7 @@ ChartJS.register(
 );
 
 const CompareCgpaCharts = ({ results, compareResults }) => {
-  const [chartType, setChartType] = useState("bar"); // Default chart type
+  const [chartType, setChartType] = useState("bar");
 
   const labels = results.map((semester) => semester.semesterName);
 
@@ -38,43 +39,87 @@ const CompareCgpaCharts = ({ results, compareResults }) => {
     {
       label: "Your CGPA",
       data: results.map((semester) => semester.cgpa),
-      borderColor: "rgba(75, 192, 192, 1)",
-      backgroundColor: "rgba(75, 192, 192, 0.2)",
-      tension: 0.4, // Smooth curve
+      borderColor: "rgb(34, 197, 94)", // green-500
+      backgroundColor: "rgba(34, 197, 94, 0.2)",
+      tension: 0.4,
       fill: true,
     },
     {
       label: "Competitor CGPA",
       data: compareResults.map((semester) => semester.cgpa),
-      borderColor: "rgba(255, 99, 132, 1)",
-      backgroundColor: "rgba(255, 99, 132, 0.2)",
-      tension: 0.4, // Smooth curve
+      borderColor: "rgb(239, 68, 68)", // red-500
+      backgroundColor: "rgba(239, 68, 68, 0.2)",
+      tension: 0.4,
       fill: true,
     },
   ];
 
   const commonOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          padding: 20,
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif",
+          },
+          usePointStyle: true,
+          pointStyle: "circle",
+        },
       },
       tooltip: {
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        titleColor: "#1e293b",
+        bodyColor: "#1e293b",
+        borderColor: "#e2e8f0",
+        borderWidth: 1,
+        padding: 12,
+        boxPadding: 6,
+        usePointStyle: true,
         callbacks: {
           label: (tooltipItem) => `${tooltipItem.raw.toFixed(2)} CGPA`,
         },
       },
       title: {
-        display: true,
-        text: "Semester-wise CGPA Comparison",
+        display: false,
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        grid: {
+          color: "rgba(226, 232, 240, 0.5)",
+        },
+        ticks: {
+          font: {
+            size: 11,
+            family: "'Inter', sans-serif",
+          },
+          color: "#64748b",
+        },
         title: {
           display: true,
           text: "CGPA",
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif",
+          },
+          color: "#64748b",
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          font: {
+            size: 11,
+            family: "'Inter', sans-serif",
+          },
+          color: "#64748b",
         },
       },
     },
@@ -103,9 +148,15 @@ const CompareCgpaCharts = ({ results, compareResults }) => {
               scales: {
                 x: {
                   stacked: true,
+                  grid: {
+                    display: false,
+                  },
                 },
                 y: {
                   stacked: true,
+                  grid: {
+                    color: "rgba(226, 232, 240, 0.5)",
+                  },
                 },
               },
             }}
@@ -116,28 +167,39 @@ const CompareCgpaCharts = ({ results, compareResults }) => {
     }
   };
 
-  return (
-    <div className="mx-auto my-4 w-4/5">
-      <h2 className="mb-4 text-center text-xl font-bold">
-        Semester-wise CGPA Comparison
-      </h2>
+  const chartTypes = [
+    { value: "bar", label: "Bar Chart", icon: FaChartBar },
+    { value: "line", label: "Line Chart", icon: FaChartLine },
+    { value: "radar", label: "Radar Chart", icon: FaChartPie },
+    { value: "stackedBar", label: "Stacked Bar", icon: FaLayerGroup },
+  ];
 
+  return (
+    <div className="space-y-6">
       {/* Chart Type Selector */}
-      <div className="mb-4 flex justify-center">
-        <select
-          className="select select-bordered w-1/2 md:w-1/4"
-          value={chartType}
-          onChange={(e) => setChartType(e.target.value)}
-        >
-          <option value="bar">Bar Chart</option>
-          <option value="line">Line Chart</option>
-          <option value="radar">Radar Chart</option>
-          <option value="stackedBar">Stacked Bar Chart</option>
-        </select>
+      <div className="flex flex-wrap gap-2">
+        {chartTypes.map(({ value, label, icon: Icon }) => (
+          <button
+            key={value}
+            onClick={() => setChartType(value)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              chartType === value
+                ? "bg-blue-100 text-blue-600"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            <Icon className="text-lg" />
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Render Selected Chart */}
-      <div>{renderChart()}</div>
+      {/* Chart Container */}
+      <div className="h-[400px] bg-white/50 backdrop-blur-sm rounded-lg p-4 border border-slate-200">
+        {renderChart()}
+      </div>
+
+      {/* Comparison Summary */}
       {results.length > 0 && (
         <ComparisonSummary results={results} compareResults={compareResults} />
       )}

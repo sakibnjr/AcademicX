@@ -1,4 +1,5 @@
 import React from "react";
+import { FaChartLine, FaArrowUp, FaArrowDown, FaEquals } from "react-icons/fa";
 
 const ComparisonSummary = ({ results, compareResults }) => {
   const calculateDifference = (result, compareResult) => {
@@ -27,25 +28,22 @@ const ComparisonSummary = ({ results, compareResults }) => {
       return totalCredits > 0 ? totalCgpa / totalCredits : 0;
     };
 
-    // Calculate average CGPA for both your results and comparison results
     const yourAverageCgpa = calculateAverageCgpa(results);
     const comparisonAverageCgpa = calculateAverageCgpa(compareResults);
-
-    // Calculate total difference with direction
     const difference = yourAverageCgpa - comparisonAverageCgpa;
     const totalDifference = {
       value: Math.abs(difference).toFixed(2),
       direction: difference > 0 ? "higher" : "lower",
     };
 
-    // Count higher CGPA per semester
-    let highestCount = { yourCGPA: 0, comparisonCGPA: 0 };
+    let highestCount = { yourCGPA: 0, comparisonCGPA: 0, equal: 0 };
 
     results.forEach((semester, index) => {
       const compareSemester = compareResults[index];
       if (semester && compareSemester) {
         if (semester.cgpa > compareSemester.cgpa) highestCount.yourCGPA++;
-        if (semester.cgpa < compareSemester.cgpa) highestCount.comparisonCGPA++;
+        else if (semester.cgpa < compareSemester.cgpa) highestCount.comparisonCGPA++;
+        else highestCount.equal++;
       }
     });
 
@@ -58,86 +56,108 @@ const ComparisonSummary = ({ results, compareResults }) => {
   const { totalDifference, highestCount } = overallComparison();
 
   return (
-    <div className="mt-8 rounded-lg bg-gray-100 p-6 shadow-lg">
-      {/* Header */}
-      <h2 className="mb-6 text-center text-2xl font-bold">
-        Comparison Summary
-      </h2>
+    <div className="space-y-6">
+      {/* Overall Performance Card */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-slate-200">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="p-1.5 rounded-lg bg-green-100">
+            <FaChartLine className="text-green-600 text-lg" />
+          </div>
+          <h2 className="text-lg font-semibold text-slate-800">
+            Overall Performance
+          </h2>
+        </div>
 
-      {/* Total CGPA Difference */}
-      <div className="mb-6 border-l-4 border-blue-500 bg-blue-50 p-4">
-        <p className="font-semibold">
-          <span className="text-blue-600">Total CGPA Difference:</span>{" "}
-          {totalDifference.value} Points
-        </p>
-      </div>
-
-      {/* Overall Comparison Section */}
-      <div className="mt-6">
-        <h3 className="mb-4 text-lg font-semibold">Overall Comparison</h3>
-        <div className="stats stats-vertical bg-white shadow lg:stats-horizontal">
-          {/* Your CGPA Higher Count */}
-          <div className="stat">
-            <div className="stat-title">Your CGPA Higher</div>
-            <div className="stat-value text-blue-600">
-              {highestCount.yourCGPA}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Your CGPA Higher */}
+          <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+            <div className="flex items-center gap-2 mb-1">
+              <FaArrowUp className="text-green-600" />
+              <span className="text-sm font-medium text-green-700">Your CGPA Higher</span>
             </div>
-            <div className="stat-desc">semesters</div>
+            <div className="text-2xl font-bold text-green-600">{highestCount.yourCGPA}</div>
+            <div className="text-sm text-green-600">semesters</div>
           </div>
 
-          {/* Competitor CGPA Higher Count */}
-          <div className="stat">
-            <div className="stat-title">Competitor CGPA Higher</div>
-            <div className="stat-value text-red-600">
-              {highestCount.comparisonCGPA}
+          {/* Competitor CGPA Higher */}
+          <div className="bg-red-50 rounded-lg p-4 border border-red-100">
+            <div className="flex items-center gap-2 mb-1">
+              <FaArrowDown className="text-red-600" />
+              <span className="text-sm font-medium text-red-700">Competitor CGPA Higher</span>
             </div>
-            <div className="stat-desc">semesters</div>
+            <div className="text-2xl font-bold text-red-600">{highestCount.comparisonCGPA}</div>
+            <div className="text-sm text-red-600">semesters</div>
+          </div>
+
+          {/* Equal CGPA */}
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <div className="flex items-center gap-2 mb-1">
+              <FaEquals className="text-slate-600" />
+              <span className="text-sm font-medium text-slate-700">Equal CGPA</span>
+            </div>
+            <div className="text-2xl font-bold text-slate-600">{highestCount.equal}</div>
+            <div className="text-sm text-slate-600">semesters</div>
+          </div>
+        </div>
+
+        {/* Total Difference */}
+        <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-100">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-700">Total CGPA Difference</span>
+            <span className={`text-lg font-bold ${totalDifference.direction === 'higher' ? 'text-green-600' : 'text-red-600'}`}>
+              {totalDifference.value} Points {totalDifference.direction}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Semester-wise Comparison */}
-      <h3 className="mb-4 mt-8 text-lg font-semibold">
-        Semester-wise Comparison
-      </h3>
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border border-gray-300 p-2">Semester</th>
-              <th className="border border-gray-300 p-2">Higher CGPA</th>
-              <th className="border border-gray-300 p-2">CGPA Difference</th>
-            </tr>
-          </thead>
-          <tbody>
-            {results.map((semester, index) => {
-              const compareSemester = compareResults[index];
-              const diff = calculateDifference(semester, compareSemester);
-              return (
-                <tr
-                  key={index}
-                  className={`${
-                    diff > 0 ? "bg-green-50" : "bg-red-50"
-                  } hover:bg-gray-100`}
-                >
-                  <td className="border border-gray-300 p-2">
-                    {semester?.semesterName || "N/A"}
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    {highestCgpa(semester, compareSemester)}
-                  </td>
-                  <td
-                    className={`border border-gray-300 p-2 ${
-                      diff > 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {diff} CGPA
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-slate-200">
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">
+          Semester-wise Comparison
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Semester</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Higher CGPA</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">CGPA Difference</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {results.map((semester, index) => {
+                const compareSemester = compareResults[index];
+                const diff = calculateDifference(semester, compareSemester);
+                const isHigher = diff > 0;
+                return (
+                  <tr key={index} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 text-sm text-slate-600">
+                      {semester?.semesterName || "N/A"}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        isHigher 
+                          ? 'bg-green-100 text-green-700' 
+                          : diff < 0 
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-slate-100 text-slate-700'
+                      }`}>
+                        {isHigher ? <FaArrowUp className="text-xs" /> : diff < 0 ? <FaArrowDown className="text-xs" /> : <FaEquals className="text-xs" />}
+                        {highestCgpa(semester, compareSemester)}
+                      </span>
+                    </td>
+                    <td className={`py-3 px-4 text-sm font-medium ${
+                      isHigher ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-slate-600'
+                    }`}>
+                      {diff} CGPA
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

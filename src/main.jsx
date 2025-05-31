@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 import App from "./App.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -13,9 +15,13 @@ const rootElement = document.getElementById("root");
 const root = ReactDOM.createRoot(rootElement);
 
 root.render(
-  <SkeletonTheme baseColor="#848b95" highlightColor="#444">
-    <Router>
-      <App />
-    </Router>
-  </SkeletonTheme>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <SkeletonTheme baseColor="#848b95" highlightColor="#444">
+        <Router>
+          <App />
+        </Router>
+      </SkeletonTheme>
+    </Provider>
+  </React.StrictMode>,
 );

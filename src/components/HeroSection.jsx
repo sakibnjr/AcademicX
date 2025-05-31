@@ -1,28 +1,70 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { FaChartLine, FaFilter, FaUsers, FaGraduationCap } from 'react-icons/fa';
 
-const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
-  const handleSearch = (e) => {
+// Memoized feature data to prevent re-renders
+const features = [
+  {
+    icon: <FaChartLine className="h-6 w-6 text-blue-500" />,
+    title: "Performance Analytics",
+    description: "Track your SGPA and course-wise performance with detailed analytics."
+  },
+  {
+    icon: <FaFilter className="h-6 w-6 text-indigo-500" />,
+    title: "Filter Results",
+    description: "Filter your results by semester, course, or any other criteria."
+  },
+  {
+    icon: <FaUsers className="h-6 w-6 text-violet-500" />,
+    title: "Compare",
+    description: "Compare your results with your friends and see how you stack up."
+  }
+];
+
+// Optimized animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      duration: 0.6
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6 }
+  }
+};
+
+const HeroSection = ({ studentId, setStudentId, handleFetchResults, isLoading = false }) => {
+  const handleSearch = useCallback((e) => {
     e.preventDefault();
     handleFetchResults();
-  };
+  }, [handleFetchResults]);
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 overflow-hidden">
-      {/* Animated Background Pattern */}
+      {/* Simplified Background Pattern */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNGMwIDMuMzE0LTIuNjg2IDYtNiA2cy02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiA2IDIuNjg2IDYgNnoiIGZpbGw9IiM2NjYiLz48L2c+PC9zdmc+')] opacity-5"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 via-blue-50/50 to-indigo-50/50 backdrop-blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 via-blue-50/50 to-indigo-50/50"></div>
       </div>
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="text-center mt-6">
+        <motion.div 
+          className="text-center mt-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            variants={itemVariants}
             className="mb-6 md:mb-8"
           >
             <span className="inline-block px-3 py-1.5 rounded-full bg-blue-100 text-blue-600 text-sm font-medium mb-3 md:mb-4 border border-blue-200">
@@ -38,9 +80,7 @@ const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
 
           {/* Search Form */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            variants={itemVariants}
             className="max-w-xl mx-auto mb-10 md:mb-12"
           >
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
@@ -67,28 +107,10 @@ const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
 
           {/* Features */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            variants={itemVariants}
             className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto"
           >
-            {[
-              {
-                icon: <FaChartLine className="h-6 w-6 text-blue-500" />,
-                title: "Performance Analytics",
-                description: "Track your SGPA and course-wise performance with detailed analytics."
-              },
-              {
-                icon: <FaFilter className="h-6 w-6 text-indigo-500" />,
-                title: "Filter Results",
-                description: "Filter your results by semester, course, or any other criteria."
-              },
-              {
-                icon: <FaUsers className="h-6 w-6 text-violet-500" />,
-                title: "Compare",
-                description: "Compare your results with your friends and see how you stack up."
-              }
-            ].map((feature, index) => (
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
                 whileHover={{ scale: 1.02 }}
@@ -100,39 +122,17 @@ const HeroSection = ({ studentId, setStudentId, handleFetchResults }) => {
               </motion.div>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Decorative Elements */}
+      {/* Simplified Decorative Elements */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
       
-      {/* Animated Blobs */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          rotate: [0, 90, 0],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-        className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-200/30 rounded-full mix-blend-multiply filter blur-xl"
-      />
-      <motion.div
-        animate={{
-          scale: [1.2, 1, 1.2],
-          rotate: [90, 0, 90],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-        className="absolute bottom-1/4 -right-20 w-72 h-72 bg-indigo-200/30 rounded-full mix-blend-multiply filter blur-xl"
-      />
+      {/* Simplified Static Blobs */}
+      <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-200/20 rounded-full mix-blend-multiply filter blur-xl opacity-60" />
+      <div className="absolute bottom-1/4 -right-20 w-72 h-72 bg-indigo-200/20 rounded-full mix-blend-multiply filter blur-xl opacity-60" />
     </div>
   );
 };
 
-export default HeroSection; 
+export default React.memo(HeroSection); 

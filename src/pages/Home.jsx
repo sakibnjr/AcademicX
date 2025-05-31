@@ -11,14 +11,16 @@ const Home = ({
   totalCreditsCompleted,
   totalSemestersCompleted,
   results,
-  compareResults,
-  loading,
+  isProfileLoading,
+  isResultsLoading,
   retake,
   retakeCourses,
 }) => {
+  const isLoading = isProfileLoading || isResultsLoading;
+
   return (
     <div>
-      {!profile && !loading ? (
+      {!profile && !isLoading ? (
         <HeroSection 
           studentId={studentId}
           setStudentId={setStudentId}
@@ -31,7 +33,8 @@ const Home = ({
           totalCreditsCompleted={totalCreditsCompleted}
           totalSemestersCompleted={totalSemestersCompleted}
           results={results}
-          loading={loading}
+          loading={isLoading}
+          isResultsLoading={isResultsLoading}
           retake={retake}
           retakeCourses={retakeCourses}
         />
@@ -40,4 +43,4 @@ const Home = ({
   );
 };
 
-export default Home;
+export default React.memo(Home);

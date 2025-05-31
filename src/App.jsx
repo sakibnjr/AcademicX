@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo, lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Routes,
@@ -10,12 +10,14 @@ import { Toaster, toast } from "react-hot-toast";
 
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
-import MarksheetFilter from "./pages/MarksheetFilter.jsx";
-import Compare from "./pages/Compare.jsx";
 import Home from "./pages/Home.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
-import ContactPage from "./pages/Contact.jsx";
-import FAQ from "./pages/FAQ.jsx";
+
+// Lazy load routes for better performance
+const MarksheetFilter = lazy(() => import("./pages/MarksheetFilter.jsx"));
+const Compare = lazy(() => import("./pages/Compare.jsx"));
+const ContactPage = lazy(() => import("./pages/Contact.jsx"));
+const FAQ = lazy(() => import("./pages/FAQ.jsx"));
 
 import generateSemesterList from "./functions/semesters.js";
 import {
@@ -25,8 +27,14 @@ import {
   calculateSummary,
   fetchStudentProfile,
   fetchSemesterData,
-  setError,
 } from "./store/features/studentSlice";
+
+// Loading component for lazy routes
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 const App = () => {
   const dispatch = useDispatch();
@@ -38,8 +46,8 @@ const App = () => {
     profile,
     results,
     compareResults,
-    loading,
-    error,
+    isProfileLoading,
+    isResultsLoading,
     averageCgpa,
     totalCreditsCompleted,
     totalSemestersCompleted,
@@ -47,14 +55,26 @@ const App = () => {
     retakeCourses,
   } = useSelector((state) => state.student);
 
+  // Memoized callbacks to prevent unnecessary re-renders
+  const handleSetStudentId = useCallback((id) => {
+    dispatch(setStudentId(id));
+  }, [dispatch]);
+
+  const handleSetCompareStudentId = useCallback((id) => {
+    dispatch(setCompareStudentId(id));
+  }, [dispatch]);
+
+  const handleResetResults = useCallback(() => {
+    dispatch(resetResults());
+  }, [dispatch]);
+
   // Handle fetching results for the main student
-  const handleFetchResults = async () => {
+  const handleFetchResults = useCallback(async () => {
     if (!studentId) {
       toast.error("Please enter a valid Student ID.", {
         position: "top-center",
         duration: 4000,
       });
-      dispatch(setError("Please enter a valid Student ID."));
       return;
     }
 
@@ -69,7 +89,6 @@ const App = () => {
           position: "top-center",
           duration: 4000,
         });
-        dispatch(setError("Student profile not found."));
         return;
       }
 
@@ -83,17 +102,22 @@ const App = () => {
         }))
       );
 
-      await Promise.all(fetchPromises);
-      dispatch(calculateSummary());
+      const semesterResults = await Promise.all(fetchPromises);
+      
+      // Count successful semester fetches
+      const successfulResults = semesterResults.filter(result => 
+        result.payload && result.payload.data && result.payload.data.length > 0
+      );
 
-      // Only show error if we're not loading and still have no results
-      if (!loading && results.length === 0) {
+      await dispatch(calculateSummary());
+
+      // Check actual fetched results instead of state
+      if (successfulResults.length === 0) {
         toast.error("No data found for the provided Student ID.", {
           position: "top-center",
           duration: 4000,
         });
-        dispatch(setError("No data found for the provided Student ID."));
-      } else if (results.length > 0) {
+      } else {
         toast.success("Results fetched successfully!", {
           position: "top-center",
           duration: 3000,
@@ -105,17 +129,15 @@ const App = () => {
         position: "top-center",
         duration: 4000,
       });
-      dispatch(setError(error.message));
     }
-  };
+  }, [studentId, dispatch, navigate]);
 
-  const handleCompareResults = async () => {
+  const handleCompareResults = useCallback(async () => {
     if (!compareStudentId) {
       toast.error("Please enter a valid second Student ID.", {
         position: "top-center",
         duration: 4000,
       });
-      dispatch(setError("Please enter a valid second Student ID."));
       return;
     }
 
@@ -144,73 +166,80 @@ const App = () => {
           position: "top-center",
           duration: 4000,
         });
-        dispatch(setError("No comparison data found for the provided Student ID."));
       }
     } catch (error) {
       toast.error(error.message || "Failed to fetch comparison results. Please try again.", {
         position: "top-center",
         duration: 4000,
       });
-      dispatch(setError(error.message));
     }
-  };
+  }, [compareStudentId, dispatch, navigate, compareResults.length]);
+
+  // Memoized route guard condition
+  const canAccessProtectedRoutes = useMemo(() => {
+    return results && profile;
+  }, [results, profile]);
 
   return (
     <div>
       <Toaster />
-      <Navbar profile={profile} resetResults={() => dispatch(resetResults())} />
+      <Navbar profile={profile} resetResults={handleResetResults} />
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Home
-              studentId={studentId}
-              setStudentId={(id) => dispatch(setStudentId(id))}
-              handleFetchResults={handleFetchResults}
-              profile={profile}
-              averageCgpa={averageCgpa}
-              totalCreditsCompleted={totalCreditsCompleted}
-              totalSemestersCompleted={totalSemestersCompleted}
-              results={results}
-              compareResults={compareResults}
-              loading={loading}
-              retake={retake}
-              retakeCourses={retakeCourses}
-            />
-          }
-        />
-
-        <Route
-          path="/filter"
-          element={
-            results && profile ? (
-              <MarksheetFilter results={results} averageCgpa={averageCgpa} />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/compare"
-          element={
-            results && profile ? (
-              <Compare
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Home
+                studentId={studentId}
+                setStudentId={handleSetStudentId}
+                handleFetchResults={handleFetchResults}
+                profile={profile}
+                averageCgpa={averageCgpa}
+                totalCreditsCompleted={totalCreditsCompleted}
+                totalSemestersCompleted={totalSemestersCompleted}
                 results={results}
-                compareStudentId={compareStudentId}
-                setCompareStudentId={(id) => dispatch(setCompareStudentId(id))}
-                handleCompareResults={handleCompareResults}
                 compareResults={compareResults}
+                isProfileLoading={isProfileLoading}
+                isResultsLoading={isResultsLoading}
+                retake={retake}
+                retakeCourses={retakeCourses}
               />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+            }
+          />
+
+          <Route
+            path="/filter"
+            element={
+              canAccessProtectedRoutes ? (
+                <MarksheetFilter results={results} averageCgpa={averageCgpa} />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            path="/compare"
+            element={
+              canAccessProtectedRoutes ? (
+                <Compare
+                  results={results}
+                  compareStudentId={compareStudentId}
+                  setCompareStudentId={handleSetCompareStudentId}
+                  handleCompareResults={handleCompareResults}
+                  compareResults={compareResults}
+                  isResultsLoading={isResultsLoading}
+                />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
       <Footer />
     </div>
   );

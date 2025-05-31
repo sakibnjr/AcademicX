@@ -13,6 +13,7 @@ const ProfileAndSummary = ({
   totalSemestersCompleted,
   results,
   loading,
+  isResultsLoading,
   retake,
   retakeCourses,
 }) => {
@@ -22,7 +23,8 @@ const ProfileAndSummary = ({
     setExpandedSemester(expandedSemester === index ? null : index);
   };
 
-  if (loading) {
+  // Show skeleton only if we're still loading and have no data at all
+  if (loading && !profile && results.length === 0) {
     return <DashboardSkeleton />;
   }
 
@@ -50,18 +52,38 @@ const ProfileAndSummary = ({
           >
             <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-sm p-4 sm:p-6 text-white">
               <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2">Current CGPA</h3>
-              <p className="text-2xl sm:text-3xl font-bold">{averageCgpa}</p>
+              {isResultsLoading && !averageCgpa ? (
+                <div className="animate-pulse">
+                  <div className="h-8 bg-indigo-400 rounded w-16"></div>
+                </div>
+              ) : (
+                <p className="text-2xl sm:text-3xl font-bold">{averageCgpa}</p>
+              )}
             </div>
             <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-sm p-4 sm:p-6 text-white">
               <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2">Credits Completed</h3>
-              <p className="text-2xl sm:text-3xl font-bold">{totalCreditsCompleted || 0}</p>
-              {retake && (
-                <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-purple-100">Retake Courses: {retakeCourses}</p>
+              {isResultsLoading && !totalCreditsCompleted ? (
+                <div className="animate-pulse">
+                  <div className="h-8 bg-purple-400 rounded w-16"></div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-2xl sm:text-3xl font-bold">{totalCreditsCompleted || 0}</p>
+                  {retake && (
+                    <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-purple-100">Retake Courses: {retakeCourses}</p>
+                  )}
+                </>
               )}
             </div>
             <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl shadow-sm p-4 sm:p-6 text-white">
               <h3 className="text-base sm:text-lg font-medium mb-1 sm:mb-2">Semesters</h3>
-              <p className="text-2xl sm:text-3xl font-bold">{totalSemestersCompleted || 0}</p>
+              {isResultsLoading && !totalSemestersCompleted ? (
+                <div className="animate-pulse">
+                  <div className="h-8 bg-pink-400 rounded w-16"></div>
+                </div>
+              ) : (
+                <p className="text-2xl sm:text-3xl font-bold">{totalSemestersCompleted || 0}</p>
+              )}
             </div>
           </motion.div>
 
@@ -76,7 +98,14 @@ const ProfileAndSummary = ({
               <Profile profile={profile} />
             </div>
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 lg:col-span-4">
-              <CgpaChart results={results} />
+              {isResultsLoading && results.length === 0 ? (
+                <div className="animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+                  <div className="h-64 bg-gray-200 rounded"></div>
+                </div>
+              ) : (
+                <CgpaChart results={results} />
+              )}
             </div>
           </motion.div>
 
@@ -96,12 +125,25 @@ const ProfileAndSummary = ({
                 <GenerateSemesterReport results={results} retakenCourses={retake ? retakeCourses : []} />
               </div>
             </div>
-            <SemesterSummary
-              retake={retake}
-              results={results}
-              toggleSemesterDetails={toggleSemesterDetails}
-              expandedSemester={expandedSemester}
-            />
+            {isResultsLoading && results.length === 0 ? (
+              <div className="p-4 sm:p-6">
+                <div className="animate-pulse space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="border border-gray-200 rounded-lg p-4">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <SemesterSummary
+                retake={retake}
+                results={results}
+                toggleSemesterDetails={toggleSemesterDetails}
+                expandedSemester={expandedSemester}
+              />
+            )}
           </motion.div>
         </div>
       </div>

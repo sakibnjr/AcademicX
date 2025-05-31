@@ -15,11 +15,11 @@ export const fetchStudentProfile = createAsyncThunk(
 
 export const fetchSemesterData = createAsyncThunk(
   "student/fetchSemesterData",
-  async ({ semesterId, studentId }) => {
+  async ({ semesterId, studentId, semesterName, isComparison = false }) => {
     const response = await axios.get(
       `/api/result?grecaptcha=&semesterId=${semesterId}&studentId=${studentId}`,
     );
-    return response.data;
+    return { data: response.data, semesterName, isComparison };
   },
 );
 
@@ -34,8 +34,9 @@ const initialState = {
   totalSemestersCompleted: 0,
   retake: false,
   retakeCourses: 0,
-  loading: false,
-  error: null,
+  isProfileLoading: false,
+  isResultsLoading: false,
+  pendingRequests: 0,
 };
 
 const studentSlice = createSlice({
@@ -48,10 +49,6 @@ const studentSlice = createSlice({
     setCompareStudentId: (state, action) => {
       state.compareStudentId = action.payload;
     },
-    setError: (state, action) => {
-      state.error = action.payload;
-      state.loading = false;
-    },
     resetResults: (state) => {
       state.studentId = "";
       state.results = [];
@@ -62,7 +59,9 @@ const studentSlice = createSlice({
       state.totalSemestersCompleted = 0;
       state.retake = false;
       state.retakeCourses = 0;
-      state.error = null;
+      state.isProfileLoading = false;
+      state.isResultsLoading = false;
+      state.pendingRequests = 0;
     },
     calculateSummary: (state) => {
       const semesters = state.results;
@@ -123,44 +122,50 @@ const studentSlice = createSlice({
     builder
       // Handle fetchStudentProfile
       .addCase(fetchStudentProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.isProfileLoading = true;
       })
       .addCase(fetchStudentProfile.fulfilled, (state, action) => {
-        state.loading = false;
+        state.isProfileLoading = false;
         state.profile = action.payload;
       })
-      .addCase(fetchStudentProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
+      .addCase(fetchStudentProfile.rejected, (state) => {
+        state.isProfileLoading = false;
       })
       // Handle fetchSemesterData
       .addCase(fetchSemesterData.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.pendingRequests += 1;
+        state.isResultsLoading = true;
       })
       .addCase(fetchSemesterData.fulfilled, (state, action) => {
-        state.loading = false;
-        if (action.payload && action.payload.length > 0) {
+        state.pendingRequests -= 1;
+        if (state.pendingRequests <= 0) {
+          state.isResultsLoading = false;
+          state.pendingRequests = 0;
+        }
+
+        if (action.payload.data && action.payload.data.length > 0) {
           const semesterData = {
-            semesterName: action.meta.arg.semesterName,
-            cgpa: action.payload[0]?.cgpa,
-            totalCredits: action.payload.reduce(
+            semesterName: action.payload.semesterName,
+            cgpa: action.payload.data[0]?.cgpa,
+            totalCredits: action.payload.data.reduce(
               (total, course) => total + course.totalCredit,
               0,
             ),
-            data: action.payload,
+            data: action.payload.data,
           };
-          if (action.meta.arg.isComparison) {
+          if (action.payload.isComparison) {
             state.compareResults.push(semesterData);
           } else {
             state.results.push(semesterData);
           }
         }
       })
-      .addCase(fetchSemesterData.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
+      .addCase(fetchSemesterData.rejected, (state) => {
+        state.pendingRequests -= 1;
+        if (state.pendingRequests <= 0) {
+          state.isResultsLoading = false;
+          state.pendingRequests = 0;
+        }
       });
   },
 });
@@ -170,7 +175,6 @@ export const {
   setCompareStudentId,
   resetResults,
   calculateSummary,
-  setError,
 } = studentSlice.actions;
 
 export default studentSlice.reducer;

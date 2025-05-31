@@ -86,13 +86,14 @@ const App = () => {
       await Promise.all(fetchPromises);
       dispatch(calculateSummary());
 
-      if (results.length === 0) {
+      // Only show error if we're not loading and still have no results
+      if (!loading && results.length === 0) {
         toast.error("No data found for the provided Student ID.", {
           position: "top-center",
           duration: 4000,
         });
         dispatch(setError("No data found for the provided Student ID."));
-      } else {
+      } else if (results.length > 0) {
         toast.success("Results fetched successfully!", {
           position: "top-center",
           duration: 3000,

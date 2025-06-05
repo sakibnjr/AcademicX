@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white -mt-1">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+    <footer className="-mt-1 bg-black text-white">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
           {/* Left Section - Copyright */}
           <div className="flex items-center space-x-2 text-gray-400">
             <span>AcademicX</span>
@@ -18,13 +18,13 @@ const Footer = () => {
           <div className="flex items-center space-x-6">
             <Link
               to="/contact"
-              className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+              className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
             >
               Contact
             </Link>
             <Link
               to="/faq"
-              className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+              className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
             >
               FAQ
             </Link>
@@ -32,18 +32,25 @@ const Footer = () => {
               href="https://github.com/sakibnjr/AcademicX"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
+              className="text-sm text-gray-400 transition-colors duration-200 hover:text-white"
             >
               <FaGithub className="h-5 w-5" />
             </a>
           </div>
 
           {/* Right Section - Made with love */}
-          <div className="flex items-center text-gray-400 text-sm">
+          <div className="flex items-center text-sm text-gray-400">
             Made with
-            <FaHeart className="mx-1 text-red-500 animate-pulse" />
-            by<a href="https://www.sakibnjr.site/" target="_blank"
-              rel="noopener noreferrer" className="pl-1">SakibNjr</a>
+            <FaHeart className="mx-1 animate-pulse text-red-500" />
+            by
+            <a
+              href="https://www.sakibnjr.site/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pl-1"
+            >
+              SakibNjr
+            </a>
           </div>
         </div>
       </div>

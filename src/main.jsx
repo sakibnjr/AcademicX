@@ -16,12 +16,13 @@ const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    {/* <Provider store={store}>
       <SkeletonTheme baseColor="#848b95" highlightColor="#444">
         <Router>
           <App />
         </Router>
       </SkeletonTheme>
-    </Provider>
+    </Provider> */}
+    <Working />
   </React.StrictMode>,
 );
